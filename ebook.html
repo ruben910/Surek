@@ -10,289 +10,254 @@
 <meta property="og:url" content="https://ruben910.github.io/Surek/ebook.html">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',system-ui,sans-serif;background:#ffffff;color:#111111;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',system-ui,sans-serif;background:#f5f5f7;color:#111;overflow-x:hidden;height:100vh;display:flex;flex-direction:column}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 3rem;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.95);backdrop-filter:blur(24px);border-bottom:1px solid #eaeaea}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.95);backdrop-filter:blur(24px);border-bottom:1px solid #eaeaea}
 nav .logo{display:flex;align-items:center;gap:.65rem;text-decoration:none;color:#111}
 nav .logo-text{font-size:1rem;font-weight:800;letter-spacing:2px;text-transform:uppercase}
 nav .logo-text span{color:#666}
 nav .back-link{color:#666;text-decoration:none;font-size:.7rem;letter-spacing:1px;text-transform:uppercase;transition:color .2s;font-weight:600}
 nav .back-link:hover{color:#111}
 
-.hero{position:relative;padding:8rem 2rem 4rem;text-align:center;max-width:900px;margin:0 auto;z-index:1}
-.hero .badge{display:inline-block;background:#111;color:#fff;padding:.35rem .9rem;font-size:.65rem;letter-spacing:1.5px;text-transform:uppercase;border-radius:4px;margin-bottom:1.5rem;font-weight:600}
-.hero h1{font-size:clamp(2.5rem,5vw,4.5rem);font-weight:900;letter-spacing:-2px;line-height:1;text-transform:uppercase;margin-bottom:1rem;color:#111}
-.hero h1 span{display:block;font-weight:400;color:#666;letter-spacing:1px;font-size:clamp(1.2rem,2vw,1.5rem);margin-top:.5rem;text-transform:none}
-.hero p{color:#444;font-size:1rem;line-height:1.6;max-width:650px;margin:0 auto 2rem;font-weight:400}
-.hero .price-tag{font-size:2.5rem;font-weight:800;color:#111;margin-bottom:1rem}
-.hero .price-tag small{display:block;font-size:.8rem;color:#888;font-weight:500;margin-top:.5rem;text-transform:uppercase;letter-spacing:1px}
-.hero .btn-buy{background:#111;color:#fff;padding:1rem 3rem;font-size:.85rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:4px;cursor:pointer;transition:transform .2s, background .2s;display:inline-block;text-decoration:none}
-.hero .btn-buy:hover{background:#333;transform:translateY(-2px)}
+.book-container{flex:1;display:flex;align-items:center;justify-content:center;padding:6rem 1rem 2rem;width:100%;max-width:800px;margin:0 auto}
 
-.pages{max-width:800px;margin:0 auto;padding:0 2rem 5rem;position:relative;z-index:1}
-.pages .page{background:#fff;border:1px solid #eaeaea;border-radius:8px;margin-bottom:1rem;overflow:hidden;transition:all .3s;box-shadow:0 4px 6px rgba(0,0,0,.02)}
-.pages .page:hover{border-color:#ccc;box-shadow:0 6px 12px rgba(0,0,0,.05)}
-.pages .page .page-header{display:flex;justify-content:space-between;align-items:center;padding:1.5rem;cursor:pointer;user-select:none;background:#fafafa}
-.pages .page .page-header .num{font-size:.7rem;letter-spacing:1px;color:#888;font-weight:700}
-.pages .page .page-header h3{font-size:1.1rem;font-weight:700;color:#111;letter-spacing:-.5px}
-.pages .page .page-header .toggle{font-size:.8rem;color:#111;transition:transform .3s;font-weight:700}
-.pages .page.open .page-header .toggle{transform:rotate(180deg)}
-.pages .page .page-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
-.pages .page.open .page-content{max-height:2500px}
-.pages .page .page-content .inner{padding:2rem;border-top:1px solid #eaeaea}
-.pages .page .page-content .inner p{font-size:.95rem;color:#444;line-height:1.7;margin-bottom:1.5rem}
-.pages .page .page-content .inner .highlight{font-weight:700;color:#111}
-.pages .page .page-content .inner .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin:1.5rem 0}
-.pages .page .page-content .inner .grid-2 div{background:#f9f9f9;padding:1.25rem;border-radius:6px;border-left:4px solid #111}
-.pages .page .page-content .inner .grid-2 div .label{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:#666;margin-bottom:.5rem;font-weight:700}
-.pages .page .page-content .inner .grid-2 div .val{font-size:.95rem;font-weight:600;color:#111}
-.pages .page .page-content .inner ul{list-style:none;margin:1rem 0}
-.pages .page .page-content .inner ul li{padding:.5rem 0;padding-left:1.5rem;position:relative;font-size:.95rem;color:#444;border-bottom:1px solid #f1f1f1}
-.pages .page .page-content .inner ul li:last-child{border-bottom:none}
-.pages .page .page-content .inner ul li::before{content:'→';position:absolute;left:0;color:#111;font-weight:700}
-.pages .page .page-content .inner .quote{border-left:4px solid #111;padding:1.25rem;margin:1.5rem 0;background:#f9f9f9;font-style:italic;font-size:.95rem;color:#333;font-weight:500;border-radius:0 6px 6px 0}
+.book-viewer{background:#fff;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.08);width:100%;overflow:hidden;display:flex;flex-direction:column;min-height:650px;border:1px solid #eaeaea;position:relative}
 
-footer{padding:3rem 2rem;text-align:center;border-top:1px solid #eaeaea;background:#fafafa}
-footer span{font-size:.7rem;letter-spacing:2px;color:#888;text-transform:uppercase;font-weight:600}
-footer span em{font-style:normal;color:#111}
+.slides-wrapper{flex:1;position:relative;overflow:hidden}
+.slide{position:absolute;top:0;left:0;width:100%;height:100%;padding:3rem 2.5rem;opacity:0;visibility:hidden;transition:opacity 0.4s ease, transform 0.4s ease;transform:translateX(50px);overflow-y:auto}
+.slide.active{opacity:1;visibility:visible;transform:translateX(0);z-index:10}
+.slide.prev{transform:translateX(-50px)}
+
+.slide-num{font-size:.8rem;letter-spacing:2px;color:#00e5ff;font-weight:800;text-transform:uppercase;margin-bottom:1rem;display:inline-block}
+.slide h2{font-size:2rem;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:1.5rem;color:#111}
+.slide p{font-size:1rem;color:#444;line-height:1.6;margin-bottom:1.5rem}
+
+.img-container{margin-bottom:2rem;width:100%}
+.img-container img{width:100%;height:220px;object-fit:cover;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+.img-caption{font-size:.75rem;color:#888;text-align:center;margin-top:.5rem;font-style:italic}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin:1.5rem 0}
+.grid-2 div{background:#f9f9f9;padding:1.25rem;border-radius:8px;border-left:4px solid #111}
+.grid-2 .label{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:#666;margin-bottom:.5rem;font-weight:700}
+.grid-2 .val{font-size:.95rem;font-weight:600;color:#111}
+
+.slide ul{list-style:none;margin:1.5rem 0}
+.slide ul li{padding:.75rem 0;padding-left:1.5rem;position:relative;font-size:1rem;color:#444;border-bottom:1px solid #f1f1f1}
+.slide ul li:last-child{border-bottom:none}
+.slide ul li::before{content:'→';position:absolute;left:0;color:#00e5ff;font-weight:800}
+
+.quote{border-left:4px solid #111;padding:1.5rem;margin:2rem 0;background:#f9f9f9;font-style:italic;font-size:1.1rem;color:#111;font-weight:500;border-radius:0 8px 8px 0}
+
+.book-controls{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 2.5rem;background:#fafafa;border-top:1px solid #eaeaea}
+.btn-nav{background:#111;color:#fff;border:none;padding:.75rem 1.5rem;font-size:.85rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:4px;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.btn-nav:hover{background:#00e5ff;color:#111;transform:translateY(-2px)}
+.btn-nav:disabled{background:#ddd;color:#999;cursor:not-allowed;transform:none}
+.progress-text{font-size:.8rem;font-weight:600;color:#666;letter-spacing:1px;text-transform:uppercase}
+
+.btn-buy{background:#00e5ff;color:#111;padding:1rem 2rem;font-size:1rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;border-radius:4px;cursor:pointer;transition:transform .2s;display:block;text-align:center;text-decoration:none;margin-top:2rem;border:none;width:100%}
+.btn-buy:hover{transform:translateY(-2px)}
 
 @media(max-width:768px){
-nav{padding:1rem}
-.hero{padding:6rem 1.5rem 3rem}
-.pages{padding:0 1.5rem 3rem}
-.pages .page .page-header{padding:1.2rem}
-.pages .page .page-content .inner{padding:1.5rem}
-.pages .page .page-content .inner .grid-2{grid-template-columns:1fr}
+  .slide{padding:2rem 1.5rem}
+  .slide h2{font-size:1.6rem}
+  .grid-2{grid-template-columns:1fr}
+  .book-controls{padding:1rem 1.5rem}
+  .btn-nav{padding:.6rem 1rem;font-size:.75rem}
 }
 </style>
 </head>
 <body>
 
-
 <nav>
 <a href="index.html" class="logo logo-roll-in"><span class="logo-text">SURE<span>K</span></span></a>
-<a href="index.html" class="back-link">← Volver a la web</a>
+<a href="index.html" class="back-link">← Volver</a>
 </nav>
 
-<section class="hero">
-<div class="badge">MONETIZACIÓN ACELERADA</div>
-<h1>THE 90-DAY MONEY BLUEPRINT<span>De atleta a creador autosustentable</span></h1>
-<p>9 páginas. 90 días. El manual estratégico para convertir tu disciplina en dinero real. Cómo usar el ecosistema SUREK para generar ingresos pasivos y comisiones de venta directa.</p>
-<div class="price-tag">$47 <small>USD · Acceso a SUREK Society + Setup de Perfil</small></div>
-<a href="#" class="btn-buy" onclick="handleBuy()">Comenzar mi monetización</a>
-</section>
+<div class="book-container">
+  <div class="book-viewer">
+    <div class="slides-wrapper">
+      
+      <!-- Slide 1 -->
+      <div class="slide active">
+        <span class="slide-num">Fase 01</span>
+        <h2>La Base: Nutrición y Arranque (Días 1-30)</h2>
+        <div class="img-container">
+          <img src="images/hero.jpg" alt="Atleta SUREK en acción">
+          <p class="img-caption">El objetivo: Construir un físico de élite mientras ganas dinero.</p>
+        </div>
+        <p>Tu transformación física y financiera comienza aquí. Mientras preparas tu cuerpo con nuestro protocolo nutricional, activas tu cuenta en el ecosistema SUREK.</p>
+        <div class="grid-2">
+          <div><div class="label">Física: Déficit y Macros</div><div class="val">Protocolo estricto para bajar % grasa.</div></div>
+          <div><div class="label">Negocio: Selección Rol</div><div class="val">Elige: Trabajador, Creador o Élite.</div></div>
+        </div>
+        <ul>
+          <li>Mide tu punto de partida: peso, fotos y porcentaje de grasa.</li>
+          <li>Alimentación SUREK: alto en proteína, hidratación al máximo.</li>
+        </ul>
+        <div class="quote">"Tu cuerpo es la primera vitrina de SUREK."</div>
+      </div>
 
-<section class="pages" id="pages">
-<div class="page open">
-<div class="page-header" onclick="togglePage(this)">
-<div><span class="num">01</span></div>
-<h3>Días 1-30: La Base (Nutrición y Arranque)</h3>
-<span class="toggle">▼</span>
-</div>
-<div class="page-content">
-<div class="inner">
-<p>Tu transformación física y financiera comienza aquí. Mientras preparas tu cuerpo con nuestro protocolo nutricional, activas tu cuenta en el ecosistema SUREK.</p>
-<div class="img-container">
-  <img src="images/hero.jpg" alt="Atleta SUREK en acción">
-  <p class="img-caption">El objetivo: Construir un físico de élite mientras ganas dinero.</p>
-</div>
-<div class="grid-2">
-<div><div class="label">Física: Déficit y Macros</div><div class="val">Protocolo estricto para bajar el % de grasa.</div></div>
-<div><div class="label">Negocio: Selección de Rol</div><div class="val">Elige ser Trabajador, Creador o Élite.</div></div>
-</div>
-<ul>
-<li>Mide tu punto de partida: peso, fotos y porcentaje de grasa.</li>
-<li>Alimentación SUREK: alto en proteína, hidratación al máximo.</li>
-</ul>
-<div class="quote">"No puedes vender rendimiento si no lo vives. Tu cuerpo es la primera vitrina de SUREK."</div>
-</div>
-</div>
-</div>
+      <!-- Slide 2 -->
+      <div class="slide">
+        <span class="slide-num">Fase 02</span>
+        <h2>El Turno Diario (9:00 AM - 12:00 PM)</h2>
+        <p>Este no es un ingreso "mágico", es un ecosistema de trabajo. Todos los días debes cumplir tu turno dentro de la App.</p>
+        <div class="grid-2">
+          <div><div class="label">Tu Tarea Diaria</div><div class="val">De 9am a 12pm, apoyas el contenido local.</div></div>
+          <div><div class="label">El Impacto</div><div class="val">Fuerzas el algoritmo de Puerto Rico.</div></div>
+        </div>
+        <ul>
+          <li>Dale like, comenta y comparte los videos de tu tribu.</li>
+          <li>Esta interacción te califica para recibir tu pago mensual.</li>
+        </ul>
+      </div>
 
-<div class="page">
-<div class="page-header" onclick="togglePage(this)">
-<div><span class="num">02</span></div>
-<h3>El Turno Diario (9:00 AM - 12:00 PM)</h3>
-<span class="toggle">▼</span>
-</div>
-<div class="page-content">
-<div class="inner">
-<p>Este no es un ingreso "mágico", es un ecosistema de trabajo. Todos los días debes cumplir tu <span class="highlight">Turno de Trabajo de 3 horas</span> dentro de la App.</p>
-<div class="grid-2">
-<div><div class="label">Tu Tarea Diaria</div><div class="val">De 9am a 12pm, apoyas el contenido de tu zona local.</div></div>
-<div><div class="label">El Impacto</div><div class="val">Fuerzas el algoritmo para que los videos de Puerto Rico se viralicen.</div></div>
-</div>
-<ul>
-<li>Dale like, comenta y comparte los videos de tu tribu.</li>
-<li>Esta interacción diaria es lo que te califica para recibir tu pago mensual.</li>
-</ul>
-</div>
-</div>
-</div>
+      <!-- Slide 3 -->
+      <div class="slide">
+        <span class="slide-num">Payday #1</span>
+        <h2>Día 30: El Primer Día de Pago</h2>
+        <p>Llevas 30 días secando tu cuerpo y cumpliendo tus turnos diarios fielmente. Es el momento del primer corte del mes.</p>
+        <ul>
+          <li>Recibes tu pago proporcional del Fondo de Ingresos Pasivos de YouTube.</li>
+          <li>Validaste el sistema: ganaste dinero solo por apoyar y entrenar.</li>
+          <li>Tu físico ya empieza a verse mucho más definido.</li>
+        </ul>
+        <div class="quote">"Acabas de cobrar por ser disciplinado."</div>
+      </div>
 
-<div class="page">
-<div class="page-header" onclick="togglePage(this)">
-<div><span class="num">03</span></div>
-<h3>Día 30: El Primer Día de Pago (Payday #1)</h3>
-<span class="toggle">▼</span>
-</div>
-<div class="page-content">
-<div class="inner">
-<p>Llevas 30 días secando tu cuerpo y cumpliendo tus turnos diarios fielmente. Es el momento del primer corte del mes.</p>
-<ul>
-<li>Recibes tu pago proporcional del Fondo de Ingresos Pasivos de YouTube.</li>
-<li>Validaste el sistema: ganaste dinero solo por apoyar a tu comunidad y entrenar.</li>
-<li>Tu físico ya empieza a verse mucho más definido, estás listo para la cámara.</li>
-</ul>
-<div class="quote">"El primer cheque cambia tu mentalidad para siempre. Acabas de cobrar por ser disciplinado."</div>
-</div>
-</div>
-</div>
+      <!-- Slide 4 -->
+      <div class="slide">
+        <span class="slide-num">Fase 03</span>
+        <h2>Días 31-60: Hipertrofia y Tu 1er Video</h2>
+        <div class="img-container">
+          <img src="images/new_lifestyle_training_1782379866200.png" alt="Entrenamiento de Alto Rendimiento">
+        </div>
+        <p>Entras en la fase de hipertrofia muscular. Ahora que estás seco, empezamos a construir músculo magro. Al mismo tiempo, subes tu primer video.</p>
+        <div class="grid-2">
+          <div><div class="label">Fuerza</div><div class="val">Sobrecarga progresiva y Push/Pull.</div></div>
+          <div><div class="label">Contenido</div><div class="val">La tribu ahora te apoya a ti.</div></div>
+        </div>
+      </div>
 
-<div class="page">
-<div class="page-header" onclick="togglePage(this)">
-<div><span class="num">04</span></div>
-<h3>Días 31-60: Hipertrofia y Tu Primer Contenido</h3>
-<span class="toggle">▼</span>
-</div>
-<div class="page-content">
-<div class="inner">
-<p>Entras en la fase de hipertrofia muscular. Ahora que estás seco, empezamos a construir músculo magro. Al mismo tiempo, <span class="highlight">subes tu primer video</span>.</p>
-<div class="img-container">
-  <img src="images/new_lifestyle_training_1782379866200.png" alt="Entrenamiento de Alto Rendimiento">
-  <p class="img-caption">Inspiración visual: entrenando en fase de hipertrofia.</p>
-</div>
-<div class="grid-2">
-<div><div class="label">Física: Entrenamiento de Fuerza</div><div class="val">Protocolo de sobrecarga progresiva y Push/Pull/Legs.</div></div>
-<div><div class="label">Negocio: Subida de Video</div><div class="val">La tribu que tú apoyaste el mes pasado, ahora te apoya a ti.</div></div>
-</div>
-</div>
-</div>
-</div>
+      <!-- Slide 5 -->
+      <div class="slide">
+        <span class="slide-num">Economía</span>
+        <h2>Ventas: El Split 60/40</h2>
+        <p>Tu video se ha viralizado. Es momento de monetizar duro. Empiezas a vestir las prendas oficiales de SUREK y compartes tu link personal.</p>
+        <div class="grid-2">
+          <div><div class="label">Tu Comisión</div><div class="val" style="color:#00e5ff;font-size:1.5rem">60% GANANCIA</div></div>
+          <div><div class="label">La Marca</div><div class="val">Retiene 40% (Producción)</div></div>
+        </div>
+        <ul>
+          <li>Por cada $100 en ropa que generen tus videos, <strong>te llevas $60 limpios</strong>.</li>
+          <li>Sin inventario. Nosotros imprimimos y despachamos.</li>
+        </ul>
+      </div>
 
-<div class="page">
-<div class="page-header" onclick="togglePage(this)">
-<div><span class="num">05</span></div>
-<h3>Días 61-80: Ventas (El Split 60/40)</h3>
-<span class="toggle">▼</span>
-</div>
-<div class="page-content">
-<div class="inner">
-<p>Tu video se ha viralizado. Es momento de monetizar duro. Empiezas a vestir las prendas oficiales de SUREK y compartes tu link personal en YouTube y la App.</p>
-<div class="grid-2">
-<div><div class="label">Comisión del Creador</div><div class="val" style="color:#111;font-weight:900;font-size:1.1rem">60% de ganancia directa.</div></div>
-<div><div class="label">SUREK (La Marca)</div><div class="val">Retiene el 40% para producción y logística.</div></div>
-</div>
-<ul>
-<li>Por cada $100 en ropa que generen tus videos, <strong>tú te llevas $60 limpios</strong>.</li>
-<li>No manejas inventario ni envíos. Nosotros imprimimos y despachamos (Print-on-Demand).</li>
-</ul>
-<div class="quote">"El 60% es para ti. Premiaremos agresivamente a quienes vistan la marca y la hagan viral."</div>
-</div>
-</div>
-</div>
+      <!-- Slide 6 -->
+      <div class="slide">
+        <span class="slide-num">Payday #2</span>
+        <h2>Día 60: El Segundo Día de Pago</h2>
+        <div class="img-container">
+          <img src="images/new_business_app_1782379906831.png" alt="Revisando ganancias en la app">
+        </div>
+        <p>Segundo mes completado. Tu cuenta bancaria recibe un golpe mucho más fuerte esta vez.</p>
+        <ul>
+          <li>Recibes tu pago del Fondo Pasivo.</li>
+          <li><strong>NUEVO:</strong> Recibes el 60% acumulado de todas las ventas mundiales generadas por ti.</li>
+        </ul>
+      </div>
 
-<div class="page">
-<div class="page-header" onclick="togglePage(this)">
-<div><span class="num">06</span></div>
-<h3>Día 60: El Día de Pago #2 (Payday #2)</h3>
-<span class="toggle">▼</span>
-</div>
-<div class="page-content">
-<div class="inner">
-<p>Segundo mes completado. Tu cuenta bancaria recibe un golpe mucho más fuerte esta vez.</p>
-<ul>
-<li>Recibes tu pago del Fondo Pasivo (por tus turnos de 9am-12pm).</li>
-<li><strong>NUEVO:</strong> Recibes el 60% acumulado de todas las ventas de ropa que generaron tus videos a nivel mundial.</li>
-</ul>
-<div class="img-container">
-  <img src="images/new_business_app_1782379906831.png" alt="Revisando ganancias en la app">
-</div>
-</div>
-</div>
-</div>
+      <!-- Slide 7 -->
+      <div class="slide">
+        <span class="slide-num">Fase 04</span>
+        <h2>Días 61-90: El Creador Élite</h2>
+        <p>Llegaste a la fase final del protocolo. Físicamente estás en tu prime. Mentalmente necesitas escalar. Ahora eres un Creador Élite.</p>
+        <div class="grid-2">
+          <div><div class="label">Recovery</div><div class="val">Sueño estricto e inmersión en hielo.</div></div>
+          <div><div class="label">Escalamiento</div><div class="val">Promocionas catálogo completo.</div></div>
+        </div>
+        <ul>
+          <li>Tu rol es inspirar a los nuevos miembros.</li>
+          <li>Generas múltiples videos semanales.</li>
+        </ul>
+      </div>
 
-<div class="page">
-<div class="page-header" onclick="togglePage(this)">
-<div><span class="num">07</span></div>
-<h3>Días 61-90: Mentalidad, Recuperación y El Creador Élite</h3>
-<span class="toggle">▼</span>
-</div>
-<div class="page-content">
-<div class="inner">
-<p>Llegaste a la fase final del protocolo de 90 días. Físicamente estás en tu prime. Mentalmente necesitas escalar. Ahora eres un <span class="highlight">Creador Élite</span>.</p>
-<div class="grid-2">
-<div><div class="label">Recuperación (Recovery)</div><div class="val">Protocolo de sueño estricto, inmersión en hielo, HRV.</div></div>
-<div><div class="label">Escalamiento</div><div class="val">Promocionas catálogo completo (tenis, gorras, performance).</div></div>
-</div>
-<ul>
-<li>Tu rol ahora es inspirar a los nuevos miembros de las 20 zonas locales.</li>
-<li>Generas múltiples videos semanales para maximizar tu "Split 60/40".</li>
-</ul>
-</div>
-</div>
-</div>
+      <!-- Slide 8 -->
+      <div class="slide">
+        <span class="slide-num">Expansión</span>
+        <h2>El Efecto Viral Mundial</h2>
+        <div class="img-container">
+          <img src="images/new_tribe_running_1782379885985.png" alt="La tribu corriendo">
+          <p class="img-caption">Puerto Rico trabajando como una sola unidad.</p>
+        </div>
+        <p>Tu contenido ahora tiene tracción internacional. Miles de miembros empujando tu contenido diariamente en sus turnos de 9 a 12 hacen que el algoritmo te exponga al mundo entero.</p>
+      </div>
 
-<div class="page">
-<div class="page-header" onclick="togglePage(this)">
-<div><span class="num">08</span></div>
-<h3>El Efecto Viral Mundial de la Tribu</h3>
-<span class="toggle">▼</span>
-</div>
-<div class="page-content">
-<div class="inner">
-<p>Tu contenido ahora tiene tracción internacional. Al estar conectado con miles de puertorriqueños empujando tu contenido diariamente en sus turnos de 9 a 12, el algoritmo de YouTube te expone en Europa y Latinoamérica.</p>
-<div class="img-container">
-  <img src="images/new_tribe_running_1782379885985.png" alt="La tribu corriendo">
-  <p class="img-caption">El poder de las 20 zonas de Puerto Rico trabajando como una sola unidad.</p>
-</div>
-</div>
-</div>
-</div>
+      <!-- Slide 9 -->
+      <div class="slide">
+        <span class="slide-num">Payday #3</span>
+        <h2>Día 90: Libertad Total</h2>
+        <p>Has completado The 90-Day Architecture. Mira tu cuerpo en el espejo y luego tu cuenta bancaria. Ambos están irreconocibles.</p>
+        <ul>
+          <li>Tu físico es un anuncio ambulante de SUREK.</li>
+          <li>Tus comisiones del 60% son ahora un sueldo sólido.</li>
+        </ul>
+        <div class="quote" style="text-align:center;font-weight:800;border:none;background:transparent;font-size:1.4rem">
+          TRANSFORMASTE TU VIDA.<br>BIENVENIDO A SUREK.
+        </div>
+        <button class="btn-buy" onclick="handleBuy()">Adquirir Plan por $47 USD</button>
+      </div>
 
-<div class="page">
-<div class="page-header" onclick="togglePage(this)">
-<div><span class="num">09</span></div>
-<h3>Día 90: El Día de Pago #3 (Libertad Total)</h3>
-<span class="toggle">▼</span>
+    </div>
+    
+    <div class="book-controls">
+      <button class="btn-nav" id="prevBtn" onclick="changeSlide(-1)" disabled>Anterior</button>
+      <div class="progress-text" id="progressText">Página 1 de 9</div>
+      <button class="btn-nav" id="nextBtn" onclick="changeSlide(1)">Siguiente</button>
+    </div>
+  </div>
 </div>
-<div class="page-content">
-<div class="inner">
-<p>Has completado el "90-Day Architecture". Mira tu cuerpo en el espejo y luego mira tu cuenta bancaria en tu teléfono. Ambos están irreconocibles.</p>
-<ul>
-<li>Tu físico es un anuncio ambulante de la marca SUREK.</li>
-<li>Tus comisiones del 60% por ventas directas son ahora un sueldo sólido.</li>
-<li>Tu ingreso pasivo base del Fondo de YouTube te da paz mental.</li>
-</ul>
-<p style="margin-top:1.5rem; font-weight:900; color:#111; font-size:1.4rem; text-align:center; letter-spacing:1px">TRANSFORMASTE TU CUERPO Y TU VIDA.<br>BIENVENIDO A SUREK.</p>
-</div>
-</div>
-</div>
-</section>
-
-<footer>
-<span>SUREK <em>•</em> EST. 2026 <em>•</em> The 90-Day Architecture</span>
-</footer>
 
 <script>
-function togglePage(header){
-const page = header.closest('.page');
-page.classList.toggle('open');
-}
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressText = document.getElementById('progressText');
+  const totalSlides = slides.length;
 
-function handleBuy(){
-const msg = encodeURIComponent('Hola SUREK! Quiero adquirir el eBook "The 90-Day Architecture" por $47 USD. ¿Cómo puedo pagar?');
-window.open(`https://wa.me/1234567890?text=${msg}`,'_blank');
-}
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      slide.classList.remove('active', 'prev');
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else if (index < currentSlide) {
+        slide.classList.add('prev');
+      }
+    });
 
-document.querySelectorAll('.page')[0].classList.add('open');
+    prevBtn.disabled = currentSlide === 0;
+    nextBtn.disabled = currentSlide === totalSlides - 1;
+    progressText.innerText = `Página ${currentSlide + 1} de ${totalSlides}`;
+  }
 
-document.querySelectorAll('.page-header').forEach(h => {
-h.addEventListener('click', function(){togglePage(this)});
-});
+  function changeSlide(direction) {
+    currentSlide += direction;
+    if (currentSlide < 0) currentSlide = 0;
+    if (currentSlide >= totalSlides) currentSlide = totalSlides - 1;
+    updateSlides();
+  }
+
+  function handleBuy(){
+    const msg = encodeURIComponent('Hola SUREK! Quiero adquirir el eBook "The 90-Day Architecture" por $47 USD. ¿Cómo puedo pagar?');
+    window.open(`https://wa.me/1234567890?text=${msg}`,'_blank');
+  }
+
+  updateSlides();
 </script>
 </body>
 </html>
