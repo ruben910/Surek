@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SUREK — The Architecture of Performance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:#060b19;color:#fff;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:#060b19}
+::-webkit-scrollbar-thumb{background:#00e5ff;border-radius:2px}
+::selection{background:rgba(0,229,255,.3);color:#fff}
+
+.grid-bg{position:fixed;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(rgba(0,229,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.03) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0}
+
+.cursor-glow{position:fixed;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(0,229,255,.12),transparent 70%);pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:left .15s ease-out,top .15s ease-out;mix-blend-mode:screen}
+
+@keyframes smokeDrift{0%{transform:translateY(0) translateX(0) scale(1);opacity:0}10%{opacity:.12}90%{opacity:.08}100%{transform:translateY(-100vh) translateX(60px) scale(2);opacity:0}}
+@keyframes smokeDrift2{0%{transform:translateY(0) translateX(0) scale(1);opacity:0}10%{opacity:.1}90%{opacity:.06}100%{transform:translateY(-90vh) translateX(-70px) scale(2.2);opacity:0}}
+@keyframes logoRollIn{0%{transform:translateX(-150px) rotate(-30deg);opacity:0}60%{transform:translateX(10px) rotate(4deg);opacity:1}80%{transform:translateX(-4px) rotate(-1deg)}100%{transform:translateX(0) rotate(0deg);opacity:1}}
+@keyframes revealUp{0%{opacity:0;transform:translateY(60px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes noise{0%,100%{transform:translate(0,0)}10%{transform:translate(-2px,3px)}20%{transform:translate(3px,-1px)}30%{transform:translate(-1px,-3px)}40%{transform:translate(2px,2px)}50%{transform:translate(-3px,1px)}60%{transform:translate(1px,4px)}70%{transform:translate(-2px,-2px)}80%{transform:translate(3px,-3px)}90%{transform:translate(-1px,2px)}}
+
+.noise-overlay{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;opacity:.02;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-repeat:repeat;background-size:256px 256px;animation:noise .5s infinite}
+
+.smoke-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;overflow:hidden}
+.smoke-container .s{position:absolute;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,229,255,.15),transparent 70%);animation:smokeDrift 18s infinite ease-in-out}
+.smoke-container .s:nth-child(1){bottom:-120px;left:5%;width:400px;height:400px;animation-delay:0s;animation-duration:20s}
+.smoke-container .s:nth-child(2){bottom:-100px;left:35%;width:300px;height:300px;animation-delay:3s;animation-duration:16s;animation-name:smokeDrift2}
+.smoke-container .s:nth-child(3){bottom:-140px;left:65%;width:350px;height:350px;animation-delay:6s;animation-duration:22s}
+.smoke-container .s:nth-child(4){bottom:-80px;left:20%;width:250px;height:250px;animation-delay:9s;animation-duration:14s;animation-name:smokeDrift2}
+.smoke-container .s:nth-child(5){bottom:-120px;left:80%;width:320px;height:320px;animation-delay:5s;animation-duration:18s}
+.smoke-container .s:nth-child(6){bottom:-60px;left:50%;width:220px;height:220px;animation-delay:12s;animation-duration:15s}
+.logo-roll-in{animation:logoRollIn 1.2s cubic-bezier(.22,.68,.35,1.1) forwards}
+.reveal{opacity:0;transform:translateY(60px);transition:opacity .8s ease,transform .8s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 3rem;display:flex;justify-content:space-between;align-items:center;background:rgba(6,11,25,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(0,229,255,.08)}
+nav .logo{display:flex;align-items:center;gap:.65rem;text-decoration:none}
+nav .logo img{height:20px;width:auto}
+nav .logo-text{font-size:1rem;font-weight:700;letter-spacing:3px;color:#fff;text-transform:uppercase}
+nav .logo-text span{color:#00e5ff}
+nav .nav-links{display:flex;gap:2rem;list-style:none;align-items:center}
+nav .nav-links a{color:rgba(255,255,255,.55);text-decoration:none;font-size:.7rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;position:relative;padding-bottom:4px;transition:color .3s}
+nav .nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:#00e5ff;transition:width .3s}
+nav .nav-links a:hover{color:#00e5ff}
+nav .nav-links a:hover::after{width:100%}
+nav .menu-toggle{display:none;flex-direction:column;cursor:pointer;gap:4px;background:none;border:none;padding:4px}
+nav .menu-toggle span{width:20px;height:1.5px;background:#fff;transition:.3s}
+
+.hero{position:relative;min-height:100vh;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;padding-top:70px}
+.hero .left{padding:5rem 3rem 3rem;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2}
+.hero .left .badge{display:inline-flex;align-items:center;gap:.5rem;border:1px solid rgba(0,229,255,.2);padding:.35rem .9rem;font-size:.6rem;letter-spacing:2.5px;text-transform:uppercase;color:#00e5ff;margin-bottom:1.5rem;width:fit-content;font-weight:500}
+.hero .left .badge::before{content:'';width:5px;height:5px;background:#00e5ff;border-radius:50%}
+.hero .left h1{font-size:clamp(2.5rem,4.5vw,5rem);font-weight:800;line-height:.92;letter-spacing:-2.5px;text-transform:uppercase;margin-bottom:1rem}
+.hero .left h1 .line2{display:block;font-weight:200;color:rgba(255,255,255,.25);letter-spacing:4px;font-size:clamp(1rem,1.8vw,1.5rem);margin-top:.6rem}
+.hero .left p{color:rgba(255,255,255,.45);font-size:.85rem;line-height:1.7;max-width:400px;margin-bottom:2rem;font-family:'JetBrains Mono',monospace;font-weight:300}
+.hero .left .cta-group{display:flex;gap:.75rem;flex-wrap:wrap}
+.hero .left .btn-primary{background:transparent;border:1px solid #00e5ff;color:#00e5ff;padding:.75rem 2rem;text-decoration:none;font-size:.7rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;transition:all .3s;position:relative;overflow:hidden;cursor:pointer}
+.hero .left .btn-primary::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:#00e5ff;transition:left .35s;z-index:-1}
+.hero .left .btn-primary:hover{color:#060b19}
+.hero .left .btn-primary:hover::before{left:0}
+.hero .left .btn-secondary{background:transparent;border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.65);padding:.75rem 2rem;text-decoration:none;font-size:.7rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;transition:all .3s;cursor:pointer}
+.hero .left .btn-secondary:hover{border-color:rgba(255,255,255,.3);color:#fff}
+.hero .right{position:relative;overflow:hidden}
+.hero .right .bg-img{position:absolute;inset:0;background:url('images/hero_running_1782373758384.png') center/cover no-repeat;filter:grayscale(0.3) contrast(1.2);opacity:.65;transition:transform 0.5s ease-out;transform-origin: center;}
+.hero .right .overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(6,11,25,.75),rgba(6,11,25,.15),rgba(6,11,25,.55))}
+.hero .right .wireframe{position:absolute;inset:0;z-index:2}
+.hero .right .wireframe svg{width:100%;height:100%}
+
+.metrics-strip{position:absolute;bottom:0;left:0;right:0;padding:1.25rem 3rem;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.02);border-top:1px solid rgba(0,229,255,.1);z-index:3}
+.metrics-strip .metric{text-align:center;padding:.6rem 0;position:relative}
+.metrics-strip .metric:not(:last-child)::after{content:'';position:absolute;right:0;top:20%;height:60%;width:1px;background:rgba(0,229,255,.08)}
+.metrics-strip .metric .value{font-size:1.3rem;font-weight:700;color:#00e5ff;font-family:'JetBrains Mono',monospace}
+.metrics-strip .metric .label{font-size:.55rem;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.3);margin-top:.25rem}
+
+.section{padding:5rem 3rem;max-width:1400px;margin:0 auto;position:relative;z-index:2}
+.section .section-tag{font-size:.55rem;letter-spacing:3px;color:#00e5ff;text-transform:uppercase;font-weight:500;margin-bottom:.5rem}
+.section h2{font-size:clamp(1.8rem,3vw,2.8rem);font-weight:700;letter-spacing:-1.5px;margin-bottom:1rem;line-height:1.1}
+.section h2 span{color:rgba(255,255,255,.25);font-weight:300}
+.section .sub{color:rgba(255,255,255,.4);font-size:.85rem;margin-bottom:2.5rem;max-width:500px}
+
+.products-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem;margin-bottom:3rem}
+.product-card{background:rgba(255,255,255,.02);border:1px solid rgba(0,229,255,.08);padding:2rem;transition:all .4s;position:relative;overflow:hidden}
+.product-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,#00e5ff,transparent);transform:scaleX(0);transition:transform .4s}
+.product-card:hover::before{transform:scaleX(1)}
+.product-card:hover{border-color:rgba(0,229,255,.2);transform:translateY(-3px)}
+.product-card .badge-type{font-size:.55rem;letter-spacing:2px;text-transform:uppercase;color:#00e5ff;font-weight:500;margin-bottom:.75rem}
+.product-card h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;letter-spacing:-.3px}
+.product-card p{font-size:.78rem;color:rgba(255,255,255,.45);line-height:1.6;margin-bottom:1rem;font-family:'JetBrains Mono',monospace;font-weight:300}
+.product-card .price{font-size:1.5rem;font-weight:700;color:#00e5ff;margin-bottom:1rem;font-family:'JetBrains Mono',monospace}
+.product-card .price small{font-size:.7rem;color:rgba(255,255,255,.3);font-weight:400}
+.product-card .btn-buy{background:transparent;border:1px solid #00e5ff;color:#00e5ff;padding:.6rem 1.5rem;font-size:.65rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .3s;width:100%;font-family:'Inter',sans-serif;text-decoration:none;display:block;text-align:center}
+.product-card .btn-buy:hover{background:#00e5ff;color:#060b19}
+.product-card.featured{border-color:#00e5ff;background:rgba(0,229,255,.04)}
+.product-card.featured .badge-type{color:#00e5ff;font-weight:600}
+.product-card.featured::before{transform:scaleX(1)}
+.product-card .features{list-style:none;margin-bottom:1rem}
+.product-card .features li{font-size:.72rem;color:rgba(255,255,255,.35);padding:.25rem 0;padding-left:1rem;position:relative;font-family:'JetBrains Mono',monospace}
+.product-card .features li::before{content:'▸';position:absolute;left:0;color:#00e5ff;font-size:.6rem}
+
+.protocol-section{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;padding:4rem 0}
+.protocol-section .left{position:relative}
+.protocol-section .left .phone-frame{background:rgba(255,255,255,.03);border:1px solid rgba(0,229,255,.1);border-radius:1.5rem;padding:2rem;max-width:380px;margin:0 auto}
+.protocol-section .left .phone-frame .time{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:rgba(255,255,255,.2);letter-spacing:1px;margin-bottom:1rem}
+.protocol-section .left .phone-frame .slot{display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.protocol-section .left .phone-frame .slot:last-child{border-bottom:none}
+.protocol-section .left .phone-frame .slot .hour{font-size:.65rem;color:#00e5ff;font-family:'JetBrains Mono',monospace;min-width:40px;font-weight:500}
+.protocol-section .left .phone-frame .slot .task{font-size:.75rem;color:rgba(255,255,255,.6)}
+.protocol-section .left .phone-frame .slot .task em{font-style:normal;color:#00e5ff}
+.protocol-section .right h2{font-size:clamp(1.5rem,2.5vw,2.2rem);margin-bottom:.75rem}
+.protocol-section .right p{color:rgba(255,255,255,.45);font-size:.82rem;line-height:1.7;margin-bottom:1.5rem}
+.protocol-section .right .btn-primary{background:transparent;border:1px solid #00e5ff;color:#00e5ff;padding:.75rem 2rem;text-decoration:none;font-size:.7rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;transition:all .3s;display:inline-block;cursor:pointer}
+.protocol-section .right .btn-primary:hover{background:#00e5ff;color:#060b19}
+
+.community{background:linear-gradient(135deg,rgba(0,229,255,.05),rgba(6,11,25,1));border-radius:1.5rem;padding:3rem;border:1px solid rgba(0,229,255,.08);margin-bottom:3rem}
+.community .top{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;margin-bottom:2rem}
+.community .top .left .stat-row{display:flex;gap:2rem;margin-top:1.5rem}
+.community .top .left .stat-row div{text-align:center}
+.community .top .left .stat-row .num{font-size:1.5rem;font-weight:700;color:#00e5ff;font-family:'JetBrains Mono',monospace}
+.community .top .left .stat-row .lbl{font-size:.55rem;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.3);margin-top:.2rem}
+.community .top .right p{color:rgba(255,255,255,.45);font-size:.82rem;line-height:1.7;font-family:'JetBrains Mono',monospace;font-weight:300}
+.community .btn-community{background:transparent;border:1px solid #00e5ff;color:#00e5ff;padding:.75rem 2rem;font-size:.7rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .3s;font-family:'Inter',sans-serif;margin-top:1rem}
+.community .btn-community:hover{background:#00e5ff;color:#060b19}
+
+.chat-section{padding:0 0 3rem}
+.chat-section .chat-container{background:rgba(255,255,255,.02);border:1px solid rgba(0,229,255,.08);border-radius:1rem;overflow:hidden;max-width:800px;margin:0 auto}
+.chat-section .chat-container .chat-header{display:flex;align-items:center;gap:.75rem;padding:1rem 1.25rem;border-bottom:1px solid rgba(0,229,255,.06)}
+.chat-section .chat-container .chat-header .status-dot{width:7px;height:7px;border-radius:50%;background:#34c759;position:relative}
+.chat-section .chat-container .chat-header .info .name{font-size:.8rem;font-weight:600}
+.chat-section .chat-container .chat-header .info .title{font-size:.6rem;color:rgba(255,255,255,.35);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.chat-section .chat-container .chat-msgs{height:350px;overflow-y:auto;padding:1.25rem}
+.chat-section .chat-container .chat-msgs .msg{margin-bottom:.8rem;display:flex}
+.chat-section .chat-container .chat-msgs .msg.bot{justify-content:flex-start}
+.chat-section .chat-container .chat-msgs .msg.user{justify-content:flex-end}
+.chat-section .chat-container .chat-msgs .msg .bubble{max-width:82%;padding:.7rem 1rem;border-radius:.8rem;font-size:.82rem;line-height:1.55}
+.chat-section .chat-container .chat-msgs .msg.bot .bubble{background:rgba(255,255,255,.06);border-bottom-left-radius:.15rem;color:rgba(255,255,255,.85)}
+.chat-section .chat-container .chat-msgs .msg.user .bubble{background:#00e5ff;border-bottom-right-radius:.15rem;color:#060b19}
+.chat-section .chat-container .chat-input{display:flex;border-top:1px solid rgba(0,229,255,.06);background:rgba(255,255,255,.02)}
+.chat-section .chat-container .chat-input input{flex:1;padding:.85rem 1.25rem;background:transparent;border:none;outline:none;color:#fff;font-size:.82rem;font-family:'Inter',sans-serif}
+.chat-section .chat-container .chat-input input::placeholder{color:rgba(255,255,255,.2)}
+.chat-section .chat-container .chat-input button{background:#00e5ff;color:#060b19;border:none;padding:.85rem 1.5rem;cursor:pointer;font-weight:600;font-size:.75rem;letter-spacing:1px;text-transform:uppercase;transition:opacity .2s;font-family:'Inter',sans-serif}
+.chat-section .chat-container .chat-input button:hover{opacity:.85}
+.chat-section .chat-container .quick-actions{display:flex;gap:.5rem;padding:.75rem 1.25rem;border-top:1px solid rgba(0,229,255,.04);flex-wrap:wrap}
+.chat-section .chat-container .quick-actions button{background:rgba(255,255,255,.04);border:1px solid rgba(0,229,255,.1);color:rgba(255,255,255,.5);padding:.4rem .8rem;font-size:.65rem;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;border-radius:2px}
+.chat-section .chat-container .quick-actions button:hover{background:rgba(0,229,255,.1);color:#00e5ff;border-color:#00e5ff}
+
+footer{padding:2.5rem 3rem;border-top:1px solid rgba(0,229,255,.06);position:relative;z-index:2}
+footer .inner{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+footer .inner .brand{display:flex;align-items:center;gap:.6rem}
+footer .inner .brand img{height:14px;width:auto;opacity:.5}
+footer .inner .brand span{font-size:.65rem;letter-spacing:2.5px;color:rgba(255,255,255,.25);text-transform:uppercase}
+footer .inner .brand span em{font-style:normal;color:#00e5ff}
+footer .inner .social-links{display:flex;gap:1.5rem}
+footer .inner .social-links a{color:rgba(255,255,255,.2);text-decoration:none;font-size:.6rem;letter-spacing:1.5px;text-transform:uppercase;transition:color .2s}
+footer .inner .social-links a:hover{color:#00e5ff}
+
+@media(max-width:900px){
+nav{padding:.8rem 1.5rem}
+nav .nav-links{gap:1.25rem}
+nav .nav-links a{font-size:.65rem;letter-spacing:1.5px}
+.hero{grid-template-columns:1fr;padding-top:60px}
+.hero .left{padding:3rem 1.5rem 2rem}
+.hero .left h1{font-size:2.5rem}
+.hero .right{min-height:45vh}
+.metrics-strip{padding:1rem 1.5rem;grid-template-columns:repeat(2,1fr)}
+.metrics-strip .metric:nth-child(2)::after{display:none}
+.section{padding:3rem 1.5rem}
+.protocol-section{grid-template-columns:1fr;gap:2rem}
+.community .top{grid-template-columns:1fr;gap:1.5rem}
+footer .inner{flex-direction:column;gap:1rem;text-align:center}
+}
+
+@media(max-width:480px){
+nav{padding:.6rem 1rem}
+nav .logo-text{font-size:.85rem;letter-spacing:2px}
+nav .nav-links{gap:.75rem}
+nav .nav-links a{font-size:.6rem;letter-spacing:1px}
+.hero .left{padding:2rem 1rem}
+.hero .right{min-height:35vh}
+.hero .left h1{font-size:2rem}
+.metrics-strip .metric .value{font-size:1rem}
+.products-grid{grid-template-columns:1fr}
+.community .top .left .stat-row{gap:1rem}
+}
+
+.dashboard-preview{background:rgba(6,11,25,0.95);border:1px solid rgba(0,229,255,0.2);border-radius:1rem;padding:1.5rem;box-shadow:0 20px 40px rgba(0,0,0,0.5);transform:perspective(1000px) rotateY(-5deg) rotateX(5deg);transition:transform 0.4s ease}
+.dashboard-preview:hover{transform:perspective(1000px) rotateY(0deg) rotateX(0deg) translateY(-5px);border-color:rgba(0,229,255,0.5)}
+.dash-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:1rem;margin-bottom:1rem}
+.dash-user{display:flex;align-items:center;gap:0.75rem;font-size:0.8rem;font-weight:600}
+.dash-avatar{width:32px;height:32px;border-radius:50%;background:#00e5ff;background-image:url('images/guerrero-surek.jpg');background-size:cover;background-position:top;}
+.dash-balance{font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:rgba(255,255,255,0.5)}
+.dash-balance .text-gold{color:#00e5ff;font-size:1.1rem;font-weight:700;margin-left:0.5rem;transition:color 0.3s;}
+.dash-card{background:rgba(255,255,255,0.03);padding:0.75rem 1rem;border-radius:0.5rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;border-left:2px solid transparent;transition:all 0.3s}
+.dash-card:hover{background:rgba(0,229,255,0.05);border-left-color:#00e5ff;transform:translateX(5px)}
+.dash-card-title{font-size:0.75rem;color:rgba(255,255,255,0.8)}
+.dash-card-value{font-family:'JetBrains Mono',monospace;font-size:0.85rem;font-weight:600}
+.text-green{color:#4ade80}
+.dash-chart{display:flex;align-items:flex-end;gap:0.5rem;height:80px;margin-top:1.5rem;padding-top:1rem;border-top:1px dashed rgba(255,255,255,0.1)}
+.dash-chart .bar{flex:1;background:linear-gradient(to top,rgba(0,229,255,0.2),#00e5ff);border-radius:2px 2px 0 0;opacity:0.7;transition:all 0.3s;animation:revealUp 1s ease backwards}
+.dash-chart .bar:nth-child(1){animation-delay:0.1s}.dash-chart .bar:nth-child(2){animation-delay:0.2s}.dash-chart .bar:nth-child(3){animation-delay:0.3s}.dash-chart .bar:nth-child(4){animation-delay:0.4s}.dash-chart .bar:nth-child(5){animation-delay:0.5s}
+.dash-chart .bar:hover{opacity:1;background:#00e5ff;transform:scaleY(1.05);transform-origin:bottom}
+</style>
+</head>
+<body>
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="noise-overlay"></div>
+<div class="grid-bg"></div>
+<div class="smoke-container">
+<div class="s"></div><div class="s"></div><div class="s"></div>
+<div class="s"></div><div class="s"></div><div class="s"></div>
+</div>
+
+<nav>
+<a href="#" class="logo logo-roll-in">
+<img src="images/logo_surek_1782374202728.png" alt="SUREK" onerror="this.style.display='none'" style="height:35px;width:auto;border-radius:4px">
+<span class="logo-text">SURE<span>K</span></span>
+</a>
+<ul class="nav-links" id="navLinks">
+<li><a href="#espartano">Guerreros</a></li>
+<li><a href="#productos">Productos</a></li>
+<li><a href="#protocolo">Protocolo</a></li>
+<li><a href="#comunidad">Comunidad</a></li>
+<li><a href="#mentor">Mentor IA</a></li>
+<li><a href="ebook.html">eBook</a></li>
+<li><a href="plan-90-dias.html" style="color:#060b19; background:#00e5ff; padding: 6px 12px; border-radius: 2px; font-weight:700;">Plan 90 Días</a></li>
+</ul>
+</nav>
+
+<section class="hero">
+<div class="left">
+<div class="badge">Fundado en el rendimiento</div>
+<h1>THE ARCHITECTURE<br>OF PERFORMANCE<span class="line2">CUERPO · MENTE · DATOS</span></h1>
+<p>Donde el elite humano se encuentra con la arquitectura digital. Sistemas diseñados para optimizar cuerpo, mente y datos en una sola frecuencia.</p>
+<div class="cta-group">
+<a href="#productos" class="btn-primary">Explorar productos</a>
+<a href="#mentor" class="btn-secondary">Hablar con mentor IA</a>
+</div>
+</div>
+<div class="right">
+<div class="bg-img"></div>
+<div class="overlay"></div>
+<div class="wireframe">
+<svg viewBox="0 0 600 800" fill="none" xmlns="http://www.w3.org/2000/svg" opacity="0.12">
+<path d="M100 100 L500 100 L500 600 L100 600 Z" stroke="#00e5ff" stroke-width="0.5"/>
+<path d="M150 150 L450 150 L450 550 L150 550 Z" stroke="#00e5ff" stroke-width="0.3"/>
+<path d="M200 200 L400 200 L400 500 L200 500 Z" stroke="#00e5ff" stroke-width="0.2"/>
+<line x1="300" y1="100" x2="300" y2="600" stroke="#00e5ff" stroke-width="0.3" stroke-dasharray="4 4"/>
+<line x1="100" y1="350" x2="500" y2="350" stroke="#00e5ff" stroke-width="0.3" stroke-dasharray="4 4"/>
+<circle cx="300" cy="350" r="100" stroke="#00e5ff" stroke-width="0.3" fill="none"/>
+<circle cx="300" cy="350" r="150" stroke="#00e5ff" stroke-width="0.2" fill="none" stroke-dasharray="2 6"/>
+<path d="M100 700 Q200 650 300 700 Q400 750 500 700" stroke="#00e5ff" stroke-width="0.4" fill="none"/>
+<path d="M100 750 Q200 720 300 750 Q400 780 500 750" stroke="#00e5ff" stroke-width="0.2" fill="none" stroke-dasharray="3 3"/>
+<circle cx="150" cy="200" r="3" fill="#00e5ff" opacity="0.5"/>
+<circle cx="450" cy="450" r="3" fill="#00e5ff" opacity="0.5"/>
+</svg>
+</div>
+</div>
+<div class="metrics-strip">
+<div class="metric"><div class="value" id="metric1">0%</div><div class="label">Rendimiento</div></div>
+<div class="metric"><div class="value" id="metric2">0%</div><div class="label">Precisión</div></div>
+<div class="metric"><div class="value" id="metric3">0%</div><div class="label">Adaptación</div></div>
+<div class="metric"><div class="value" id="metric4">0%</div><div class="label">Evolución</div></div>
+</div>
+</section>
+
+<section class="section reveal" id="espartano" style="padding:3rem;max-width:1400px;margin:0 auto;position:relative;z-index:2">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:stretch">
+<div style="background:linear-gradient(135deg,rgba(0,229,255,.08),rgba(6,11,25,1));border:1px solid rgba(0,229,255,.12);padding:0;position:relative;overflow:hidden;display:flex">
+<div style="width:120px;min-height:200px;flex-shrink:0;overflow:hidden"><img src="images/male_spartan_1782373781532.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;transition:transform 0.5s ease" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"></div>
+<div style="padding:2rem;flex:1"><div style="font-size:.5rem;letter-spacing:3px;color:#00e5ff;text-transform:uppercase;margin-bottom:.75rem;font-weight:500">⚔️ Código Espartano</div>
+<h3 style="font-size:1.3rem;font-weight:700;margin-bottom:.75rem;letter-spacing:-.5px">El Guerrero SUREK</h3>
+<p style="font-size:.78rem;color:rgba(255,255,255,.5);line-height:1.7;font-family:'JetBrains Mono',monospace;font-weight:300">"No hay retirada. No hay rendición. Disciplina es destino." El hombre SUREK forja su cuerpo como armadura, su mente como espada y su espíritu como escudo. Cada día es una batalla ganada.</p>
+<div style="display:flex;gap:1rem;margin-top:1.25rem;flex-wrap:wrap">
+<div style="text-align:center;padding:.75rem 1rem;background:rgba(255,255,255,.02);flex:1;min-width:80px;border-left:1px solid #00e5ff"><div style="font-size:1.1rem;font-weight:700;color:#00e5ff;font-family:'JetBrains Mono',monospace">100%</div><div style="font-size:.5rem;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.3);margin-top:.2rem">Disciplina</div></div>
+<div style="text-align:center;padding:.75rem 1rem;background:rgba(255,255,255,.02);flex:1;min-width:80px;border-left:1px solid #00e5ff"><div style="font-size:1.1rem;font-weight:700;color:#00e5ff;font-family:'JetBrains Mono',monospace">300</div><div style="font-size:.5rem;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.3);margin-top:.2rem">Días de lucha</div></div>
+</div></div></div>
+<div style="background:linear-gradient(135deg,rgba(0,229,255,.08),rgba(6,11,25,1));border:1px solid rgba(0,229,255,.12);padding:0;position:relative;overflow:hidden;display:flex">
+<div style="width:120px;min-height:200px;flex-shrink:0;overflow:hidden"><img src="images/female_spartan_1782373803945.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;transition:transform 0.5s ease" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"></div>
+<div style="padding:2rem;flex:1"><div style="font-size:.5rem;letter-spacing:3px;color:#00e5ff;text-transform:uppercase;margin-bottom:.75rem;font-weight:500">⚔️ Espíritu Spartana</div>
+<h3 style="font-size:1.3rem;font-weight:700;margin-bottom:.75rem;letter-spacing:-.5px">La Amazona SUREK</h3>
+<p style="font-size:.78rem;color:rgba(255,255,255,.5);line-height:1.7;font-family:'JetBrains Mono',monospace;font-weight:300">"La mujer espartana no solo cría guerreros — ella misma es guerrera." Fuerza, temple, inteligencia y liderazgo. La mujer SUREK domina su cuerpo, su mente y su destino sin pedir permiso.</p>
+<div style="display:flex;gap:1rem;margin-top:1.25rem;flex-wrap:wrap">
+<div style="text-align:center;padding:.75rem 1rem;background:rgba(255,255,255,.02);flex:1;min-width:80px;border-left:1px solid #00e5ff"><div style="font-size:1.1rem;font-weight:700;color:#00e5ff;font-family:'JetBrains Mono',monospace">100%</div><div style="font-size:.5rem;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.3);margin-top:.2rem">Poder</div></div>
+<div style="text-align:center;padding:.75rem 1rem;background:rgba(255,255,255,.02);flex:1;min-width:80px;border-left:1px solid #00e5ff"><div style="font-size:1.1rem;font-weight:700;color:#00e5ff;font-family:'JetBrains Mono',monospace">∞</div><div style="font-size:.5rem;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.3);margin-top:.2rem">Potencial</div></div>
+</div></div></div>
+</div>
+<div style="text-align:center;margin-top:1.5rem;padding:1.5rem;border-top:1px solid rgba(0,229,255,.06)">
+<p style="font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.3)">"Con o sin escudo, vuelve con honor o sé traído sobre él." ⏤ <span style="color:#00e5ff">Máxima Espartana</span></p>
+</div>
+</section>
+
+<section class="section reveal" id="productos">
+<div class="section-tag">⏤ Catálogo SUREK</div>
+<h2>Productos <span>para tu evolución</span></h2>
+<p class="sub">Digitales y físicos. Cada uno diseñado para optimizar tu rendimiento.</p>
+<div class="products-grid" id="productGrid"></div>
+</section>
+
+<section class="section reveal" id="protocolo">
+<div class="section-tag">⏤ Sistema Diario</div>
+<h2>Protocolo SUREK <span>— planifica tu día</span></h2>
+<p class="sub">Conéctate con tu mejor versión cada mañana. Un sistema digital que planifica tu día basado en tus objetivos reales.</p>
+<div class="protocol-section">
+<div class="left">
+<div class="phone-frame">
+<div class="time">⏤ PROTOCOLO DIARIO</div>
+<div class="slot"><span class="hour">06:00</span><span class="task">Activación — <em>Hidratación + luz solar</em></span></div>
+<div class="slot"><span class="hour">06:30</span><span class="task">Movimiento — <em>Entrenamiento funcional</em></span></div>
+<div class="slot"><span class="hour">08:00</span><span class="task">Nutrición — <em>Ventana anabólica</em></span></div>
+<div class="slot"><span class="hour">09:00</span><span class="task">Deep Work — <em>2h enfoque absoluto</em></span></div>
+<div class="slot"><span class="hour">12:00</span><span class="task">Recarga — <em>Comida + NSDR 20min</em></span></div>
+<div class="slot"><span class="hour">15:00</span><span class="task">Evolución — <em>Skill acquisition</em></span></div>
+<div class="slot"><span class="hour">18:00</span><span class="task">Desconexión — <em>Familia · Lectura</em></span></div>
+<div class="slot"><span class="hour">21:00</span><span class="task">Regeneración — <em>Sueño profundo</em></span></div>
+</div>
+</div>
+<div class="right">
+<h2>Tu día <span>arquitectado</span></h2>
+<p>El Protocolo SUREK es un sistema digital que se conecta contigo, aprende de tus métricas biológicas y diseña el plan diario perfecto. No es una agenda — es un sistema operativo para tu vida.</p>
+<p style="margin-bottom:2rem">Sincroniza con la comunidad, compite, evoluciona. Cada día es un nivel. Cada nivel te acerca a tu mejor versión.</p>
+<button class="btn-primary" onclick="alert('Beta cerrada — Próximamente. Únete a la comunidad para acceso anticipado.')">Reservar mi plaza</button>
+</div>
+</div>
+</section>
+
+<section class="section reveal" id="comunidad">
+<div class="section-tag">⏤ SUREK SOCIETY</div>
+<h2>La comunidad <span>del rendimiento</span></h2>
+<p class="sub">No estás solo. Una tribu global de elite que comparte datos, retos y evolución diaria.</p>
+<div class="community" style="background: linear-gradient(135deg, rgba(6,11,25,0.85), rgba(6,11,25,0.95)), url('images/lifestyle_pr_1782374269982.png') center/cover no-repeat; border-radius:1.5rem; padding:3rem; border:1px solid rgba(0,229,255,.08); margin-bottom:3rem; position:relative; overflow:hidden;">
+<div class="top">
+<div class="left">
+<h2 style="font-size:1.5rem;margin-bottom:.5rem">Gana dinero <span>haciendo lo que amas</span></h2>
+<p style="font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.6;font-family:'JetBrains Mono',monospace;font-weight:300">El nuevo reto digital. Compite, crea contenido, entrena, y monetiza tu evolución. SUREK Society recompensa tu constancia.</p>
+<div class="stat-row">
+<div><div class="num">2,847</div><div class="lbl">Miembros activos</div></div>
+<div><div class="num">143</div><div class="lbl">Países</div></div>
+<div><div class="num">$50K+</div><div class="lbl">En rewards</div></div>
+</div>
+<button class="btn-community" onclick="alert('Bienvenido a SUREK Society — Pronto tendrás tu acceso.')">Unirme a la tribu</button>
+</div>
+<div class="right" style="position:relative;perspective:1000px">
+<div class="dashboard-preview reveal">
+  <div class="dash-header">
+    <div class="dash-user"><div class="dash-avatar"></div><span>Marcos G.</span></div>
+    <div class="dash-balance">Balance: <span class="text-gold" id="dashBalance">$1,240.50</span></div>
+  </div>
+  <div class="dash-body">
+    <div class="dash-card">
+      <div class="dash-card-title">Reto 10K completado</div>
+      <div class="dash-card-value text-green">+$50.00</div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-card-title">Racha de 30 días</div>
+      <div class="dash-card-value text-green">+$100.00</div>
+    </div>
+    <div class="dash-chart">
+      <div class="bar" style="height: 30%"></div>
+      <div class="bar" style="height: 60%"></div>
+      <div class="bar" style="height: 45%"></div>
+      <div class="bar" style="height: 80%"></div>
+      <div class="bar" style="height: 100%"></div>
+    </div>
+  </div>
+</div>
+<div style="position:absolute; bottom:-20px; right:20px; background:rgba(0,229,255,0.15); border:1px solid #00e5ff; padding:0.5rem 1rem; border-radius:4px; font-size:0.65rem; color:#00e5ff; animation: revealUp 1s ease 1s backwards; backdrop-filter:blur(10px)">Nuevo depósito recibido 🔔</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="section reveal" id="surektv">
+<div class="section-tag">⏤ ECONOMÍA DESCENTRALIZADA</div>
+<h2>SUREK TV <span>— Tu sueldo pasivo</span></h2>
+<p class="sub">El mundo te paga por entrenar. Nuestra red de minicanales locales recompensa a quienes apoyan a la tribu de Puerto Rico.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;padding:2rem 0">
+<div class="left">
+<h3 style="font-size:1.3rem;font-weight:700;margin-bottom:1rem;color:#00e5ff">El Modelo "Turno de Trabajo"</h3>
+<p style="font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.7;margin-bottom:1.5rem">Con SUREK, tu lealtad vale dinero real. Al unirte a una de las 20 zonas geográficas, te conviertes en parte del Fondo de Ganancias. Haz tu "Turno de Trabajo" diario: mira el contenido de tu zona, dale like a tu comunidad y asegura tu porción del sueldo mensual generado por la monetización global.</p>
+<div style="background:rgba(255,255,255,.02); border:1px solid rgba(0,229,255,.2); padding:1.5rem; border-radius:1rem;">
+<h4 style="font-size:.9rem;font-weight:600;margin-bottom:1rem">Calculadora de Sueldo Estimado (Mes)</h4>
+<div style="margin-bottom:1rem">
+  <label style="display:block;font-size:.7rem;margin-bottom:.5rem;color:rgba(255,255,255,.6)">Nivel de Compromiso (Horas/Semana): <span id="calcHours" style="color:#00e5ff;font-weight:bold">5</span></label>
+  <input type="range" id="sliderHours" min="1" max="20" value="5" style="width:100%;accent-color:#00e5ff">
+</div>
+<div style="margin-bottom:1rem">
+  <label style="display:block;font-size:.7rem;margin-bottom:.5rem;color:rgba(255,255,255,.6)">Rol en la Comunidad</label>
+  <select id="calcRole" style="width:100%;padding:.5rem;background:rgba(255,255,255,.05);border:1px solid rgba(0,229,255,.3);color:#fff;border-radius:4px;font-family:inherit;font-size:.8rem">
+    <option value="1">Trabajador (Ver y Apoyar)</option>
+    <option value="3">Creador (Subir Videos)</option>
+    <option value="10">Élite (Vender Productos)</option>
+  </select>
+</div>
+<div style="font-size:1.5rem;font-weight:700;color:#00e5ff;text-align:center;padding:.5rem 0;font-family:'JetBrains Mono',monospace" id="calcResult">$200.00 / mes</div>
+</div>
+</div>
+<div class="right" style="position:relative">
+<div style="background:url('images/lifestyle_pr_1782374269982.png') center/cover; height:450px; border-radius:1.5rem; border:1px solid rgba(0,229,255,.2); position:relative; overflow:hidden">
+  <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(6,11,25,1) 0%, transparent 100%)"></div>
+  <div style="position:absolute;bottom:2rem;left:2rem;right:2rem">
+    <div style="display:flex;gap:1rem;margin-bottom:1rem">
+      <div style="background:rgba(6,11,25,.8);padding:.5rem 1rem;border-radius:2rem;font-size:.7rem;border:1px solid rgba(0,229,255,.3);backdrop-filter:blur(10px)">🌐 Alcance Mundial</div>
+      <div style="background:rgba(6,11,25,.8);padding:.5rem 1rem;border-radius:2rem;font-size:.7rem;border:1px solid rgba(0,229,255,.3);backdrop-filter:blur(10px)">💰 Monetización 100%</div>
+    </div>
+    <h3 style="font-size:1.3rem;line-height:1.3;font-weight:700">El algoritmo de YouTube trabaja para nosotros. Las vistas son mundiales, las ganancias son de tu zona.</h3>
+  </div>
+</div>
+</div>
+</div>
+<div style="margin-top:4rem; padding:3rem; background:rgba(6,11,25,0.95); border:1px solid rgba(0,229,255,0.15); border-radius:1.5rem; position:relative; overflow:hidden;">
+  <div style="position:absolute; top:-50px; right:-50px; width:200px; height:200px; background:radial-gradient(circle, rgba(0,229,255,0.1) 0%, transparent 70%); border-radius:50%"></div>
+  <h3 style="text-align:center; font-size:1.8rem; color:#fff; margin-bottom:3rem; font-weight:700">El Ecosistema <span style="color:#00e5ff">Autosustentable</span></h3>
+  <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:2rem;">
+    <div style="text-align:center;">
+      <div style="height:120px; width:120px; margin:0 auto 1.5rem; border-radius:50%; background:url('images/pr_zones_1782378354112.png') center/cover; border:2px solid #00e5ff; box-shadow:0 0 30px rgba(0,229,255,0.2)"></div>
+      <h4 style="color:#00e5ff; font-weight:700; margin-bottom:0.8rem; font-size:1.1rem">1. Conexión Zonal</h4>
+      <p style="font-size:0.85rem; color:rgba(255,255,255,0.6); line-height:1.6">Sube tus rutinas. Tu tribu de Puerto Rico te apoya diariamente con likes y views para engañar al algoritmo y forzar tu viralidad mundial.</p>
+    </div>
+    <div style="text-align:center;">
+      <div style="height:120px; width:120px; margin:0 auto 1.5rem; border-radius:50%; background:url('images/product_sneakers_1782374223346.png') center/cover; border:2px solid #00e5ff; box-shadow:0 0 30px rgba(0,229,255,0.2)"></div>
+      <h4 style="color:#00e5ff; font-weight:700; margin-bottom:0.8rem; font-size:1.1rem">2. Comisiones por Ventas</h4>
+      <p style="font-size:0.85rem; color:rgba(255,255,255,0.6); line-height:1.6">Tus videos virales exponen la ropa SUREK al mundo. Cada persona de otro país que compra unos tenis o una gorra viéndote, te genera una <strong>comisión en efectivo directa</strong>.</p>
+    </div>
+    <div style="text-align:center;">
+      <div style="height:120px; width:120px; margin:0 auto 1.5rem; border-radius:50%; background:url('images/app_earnings_1782378335430.png') center/cover; border:2px solid #00e5ff; box-shadow:0 0 30px rgba(0,229,255,0.2)"></div>
+      <h4 style="color:#00e5ff; font-weight:700; margin-bottom:0.8rem; font-size:1.1rem">3. Sueldo Pasivo Vitalicio</h4>
+      <p style="font-size:0.85rem; color:rgba(255,255,255,0.6); line-height:1.6">YouTube paga por los anuncios. El mundo compra los productos. Todo el dinero entra al Fondo y se reparte mensualmente entre todos los que cumplieron su turno de trabajo.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="section reveal" id="mentor">
+<div class="section-tag" style="text-align:center">⏤ Mentor IA</div>
+<h2 style="text-align:center">Tu coach <span>de elite personal</span></h2>
+<p class="sub" style="text-align:center;margin:0 auto 2rem">Experto en dietas, entrenamiento, mindset y productividad. Pregúntale lo que necesites.</p>
+<div class="chat-section">
+<div class="chat-container">
+<div class="chat-header">
+<div class="status-dot"></div>
+<div class="info">
+<div class="name">Mentor SUREK</div>
+<div class="title">Arquitecto de rendimiento · IA Elite</div>
+</div>
+</div>
+<div class="chat-msgs" id="chatMsgs">
+<div class="msg bot"><div class="bubble">Soy tu mentor SUREK. Experto en nutrición, entrenamiento, mentalidad y productividad. Estoy aquí para guiarte, motivarte y darte las herramientas exactas para que evoluciones. ¿En qué área quieres trabajar hoy?</div></div>
+</div>
+<div class="quick-actions" id="quickActions">
+<button onclick="quickChat('¿Cómo empiezo a perder grasa y ganar músculo?')">Perder grasa + ganar músculo</button>
+<button onclick="quickChat('¿Cuál es la mejor rutina de mañana?')">Rutina mañanera</button>
+<button onclick="quickChat('¿Qué debo comer antes y después de entrenar?')">Nutrición entrenamiento</button>
+<button onclick="quickChat('¿Cómo mantener el enfoque todo el día?')">Enfoque y productividad</button>
+<button onclick="quickChat('¿Cómo funciona el Protocolo SUREK?')">Protocolo SUREK</button>
+</div>
+<div class="chat-input">
+<input type="text" id="chatInput" placeholder="Pregúntale al mentor SUREK...">
+<button onclick="sendMsg()">Enviar</button>
+</div>
+</div>
+</div>
+</section>
+
+<footer>
+<div class="inner">
+<div class="brand">
+<img src="images/logo_surek_1782374202728.png" alt="" onerror="this.style.display='none'" style="height:24px;border-radius:2px">
+<span>SUREK <em>•</em> EST. 2026 <em>•</em> Architecture of Performance</span>
+</div>
+<div class="social-links" style="display: flex; gap: 1.5rem; align-items: center;">
+<a href="#" aria-label="Instagram" style="color: rgba(255,255,255,0.4);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+<a href="#" aria-label="X" style="color: rgba(255,255,255,0.4);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z"/><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/></svg></a>
+<a href="#" aria-label="YouTube" style="color: rgba(255,255,255,0.4);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg></a>
+</div>
+</div>
+</footer>
+
+<script>
+const products = [
+{type:"eBook · Más vendido",name:"The 90-Day Architecture",desc:"9 páginas. 90 días. El híbrido perfecto: Transforma tu físico y empieza a monetizar.",price:"$47",period:" único",features:["Protocolo Fitness","Fondo de Monetización","Comunidad SUREK"],cta:"Ver eBook →",link:"ebook.html", image: "images/hero.jpg"},
+{type:"Físico",name:"Tenis SUREK Elite",desc:"Calzado de alto rendimiento. Ligereza, tracción extrema y diseño vibrante.",price:"$120",period:" par",features:["Amortiguación reactiva","Suela antideslizante"],cta:"Comprar Tenis", image: "images/product_sneakers_1782374223346.png"},
+{type:"Físico",name:"SUREK Performance Shirt",desc:"Camisa deportiva de secado rápido. Se adapta a tu cuerpo y destaca tu físico.",price:"$35",period:" c/u",features:["Secado ultra rápido","Ajuste muscular"],cta:"Comprar Camisa", image: "images/product_sportshirt_1782374243851.png"},
+{type:"Físico",name:"Streetwear SUREK Casual",desc:"Ropa de salir con el ADN SUREK. Para que lleves tu mentalidad élite fuera del gimnasio.",price:"$55",period:" conjunto",features:["Algodón premium","Comodidad total"],cta:"Ver Colección", image: "images/product_casual_1782374498828.png"},
+{type:"Físico",name:"SUREK Pro Socks",desc:"Medias de compresión para rendimiento y recuperación. Soporte de arco y talón reforzado.",price:"$15",period:" pack 3",features:["Compresión graduada","Soporte activo"],cta:"Añadir Medias", image: "images/product_socks_1782374484496.png"},
+{type:"Físico",name:"Gorra SUREK Edition",desc:"Snapback moderna para entrenar o para tu día a día. Protégete del sol con estilo.",price:"$25",period:" única",features:["Ajuste perfecto","Diseño exclusivo"],cta:"Comprar Gorra", image: "images/product_cap_1782374512320.png"}
+];
+
+const grid = document.getElementById("productGrid");
+products.forEach((p,i) => {
+const card = document.createElement("div");
+card.className = "product-card" + (i === 0 ? " featured" : "");
+const featuresHTML = p.features.map(f => `<li>${f}</li>`).join('');
+const imgHTML = p.image ? `<div style="height:220px; width:100%; border-radius:8px; margin-bottom:1.5rem; overflow:hidden;"><img src="${p.image}" style="width:100%; height:100%; object-fit:cover; transition:transform 0.4s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"></div>` : '';
+if(p.link){card.innerHTML = `<div class="badge-type">${p.type}</div>${imgHTML}<h3>${p.name}</h3><p>${p.desc}</p><ul class="features">${featuresHTML}</ul><div class="price">${p.price}<small>${p.period}</small></div><a href="${p.link}" class="btn-buy" style="display:block;text-align:center;text-decoration:none">${p.cta}</a>`;}
+else{card.innerHTML = `<div class="badge-type">${p.type}</div>${imgHTML}<h3>${p.name}</h3><p>${p.desc}</p><ul class="features">${featuresHTML}</ul><div class="price">${p.price}<small>${p.period}</small></div><button class="btn-buy" onclick="handleBuy('${p.name}','${p.price}${p.period}')">${p.cta}</button>`;}
+grid.appendChild(card);
+});
+
+document.addEventListener('mousemove',function(e){const g=document.getElementById('cursorGlow');g.style.left=e.clientX+'px';g.style.top=e.clientY+'px'});
+
+const revealObserver=new IntersectionObserver(e=>{e.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible')}})},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>revealObserver.observe(el));
+
+function handleBuy(name,price){
+const msg = encodeURIComponent(`Hola SUREK! Quiero adquirir: ${name} por ${price}. ¿Cómo procedo?`);
+window.open(`https://wa.me/1234567890?text=${msg}`,'_blank');
+}
+
+function animateMetrics(){
+const targets=[97,99,94,100];
+targets.forEach((t,i)=>{
+const el=document.getElementById(`metric${i+1}`);
+let current=0;
+const step=Math.ceil(t/35);
+const interval=setInterval(()=>{
+current+=step;
+if(current>=t){current=t;clearInterval(interval)}
+el.textContent=current+'%';
+},40+i*60);
+});
+}
+const obs=new IntersectionObserver(e=>{if(e[0].isIntersecting){animateMetrics();obs.disconnect()}},{threshold:.3});
+obs.observe(document.querySelector('.hero'));
+
+const knowledge = {
+dieta_perder_grasa:[
+"Para perder grasa y ganar músculo simultáneamente (recomposición corporal), necesitas: 1) Consumir 1.6-2.2g de proteína por kg de peso corporal. 2) Entrenar fuerza al menos 3-4 veces por semana. 3) Un déficit calórico suave (200-400 kcal). 4) Dormir 7-9h para optimizar hormonas. La proteína es clave — distribúyela en 4-5 comidas al día.",
+"El déficit calórico moderado es clave. No bajes de 1600 kcal (mujer) o 2000 kcal (hombre) sin supervisión. Prioriza proteína magra, vegetales fibrosos y carbohidratos complejos alrededor del entrenamiento.",
+"El mejor enfoque en 2026 es construir músculo mientras pierdes grasa. Estudios muestran que el entrenamiento de resistencia combinado con cardio moderado y proteína alta produce los mejores resultados."
+],
+dieta_nutricion:[
+"Antes de entrenar: consume carbohidratos de rápida absorción 60-90 min antes (avena, plátano, arroz blanco) más una fuente ligera de proteína. Después: ventana anabólica ideal — proteína (20-40g) + carbohidratos complejos en las primeras 2 horas post-entreno.",
+"Distribuye tu proteína: 0.4g/kg por comida en 4-5 comidas al día. Ejemplo: si pesas 80kg, necesitas ~32g de proteína por comida. Huevos, pollo, pescado, tofu, whey protein son tus aliados.",
+"La hidratación es crítica: 35-40ml por kg de peso al día. Incluso una deshidratación del 2% reduce el rendimiento físico y cognitivo significativamente."
+],
+rutina_manana:[
+"La rutina óptima según la neurociencia: 1) Nada más despertar: hidratación con agua y electrolitos. 2) Exposición a luz solar directa 5-15 min (regula cortisol y melatonina). 3) Ducha fría 1-3 min (activa dopamina). 4) Movimiento: 20-30 min de ejercicio. 5) Planificación del día: 3 prioridades clave. Evita el teléfono la primera hora.",
+"Andrew Huberman recomienda: al despertar, nada de cafeína hasta 90-120 min después. Primero: hidratación, luz solar, movimiento. La cafeína temprano interfiere con el eje cortisol-adenosina.",
+"Un morning protocol probado: 06:00 hidratación → 06:15 luz solar → 06:30 NSDR/meditación → 06:45 entrenamiento → 07:30 ducha → 08:00 desayuno proteico → 08:30 deep work."
+],
+enfoque_productividad:[
+"Para mantener enfoque: 1) Trabaja en bloques de 90 min con 20 min de descanso (ritmo ultradiano). 2) Elimina notificaciones. 3) Usa la regla de las 3 prioridades máximas por día. 4) Deep work antes del mediodía. 5) Cafeína estratégica — 90 min después de despertar y no después de las 14:00.",
+"Técnica Pomodoro mejorada para 2026: 52 min de trabajo + 17 min de descanso. Durante el descanso: nada de pantallas. Camina, estírate, respira.",
+"La productividad no es hacer más — es hacer lo que importa. Cada mañana pregúntate: '¿Qué es lo UNO que hará que hoy valga la pena?' y hazlo primero."
+],
+protocolo_surek:[
+"El Protocolo SUREK es un sistema operativo para tu vida. Consta de 4 pilares: 1) Alimentación basada en tu biometría y objetivos. 2) Entrenamiento adaptativo según tu nivel y disponibilidad. 3) Mindset: rutina de journaling, afirmaciones y visualización. 4) Datos: medimos todo para optimizar constantemente. Te conectas cada mañana, sigues el plan, y la IA ajusta según tu evolución.",
+"SUREK se sincroniza con tu comunidad — puedes ver el progreso de otros, competir en retos semanales y ganar rewards. No es solo una app, es un ecosistema de alto rendimiento.",
+"El sistema digital planifica tu día basado en: tu sueño (HRV), tu nivel de energía reportado, tu fase del ciclo (si aplica), y tus objetivos semanales. Cada día es único."
+],
+default:[
+"Excelente pregunta. Como mentor SUREK, te recomiendo enfocarte en la constancia sobre la intensidad. El rendimiento no se construye en un día — se arquitecta día a día. ¿Te gustaría que profundice en nutrición, entrenamiento, mindset o productividad?",
+"Recuerda: la disciplina es el puente entre metas y logros. El sistema SUREK está diseñado para que nunca tengas que decidir — solo ejecutar. ¿Qué área quieres atacar primero?",
+"Tu cuerpo es tu templo, pero también tu laboratorio. Mide, ajusta, evoluciona. Los datos son la luz que guía tu transformación. Cuéntame más sobre tu situación actual y te daré un plan preciso."
+]
+};
+
+const allKnowledge = {...knowledge};
+const keys = Object.keys(allKnowledge);
+
+function getRandomResponse(category){
+const responses = allKnowledge[category] || allKnowledge.default;
+return responses[Math.floor(Math.random() * responses.length)];
+}
+
+function findCategory(text){
+const t = text.toLowerCase();
+if(t.includes('grasa')||t.includes('musculo')||t.includes('perder peso')||t.includes('recomposicion')||t.includes('bajar')) return 'dieta_perder_grasa';
+if(t.includes('comer')||t.includes('nutricion')||t.includes('proteina')||t.includes('comida')||t.includes('antes de entrenar')||t.includes('despues de entrenar')||t.includes('macro')) return 'dieta_nutricion';
+if(t.includes('rutina')||t.includes('mañana')||t.includes('despertar')||t.includes('manana')||t.includes('morning')||t.includes('habito')) return 'rutina_manana';
+if(t.includes('enfoque')||t.includes('productividad')||t.includes('concentrarme')||t.includes('foco')||t.includes('trabajar')||t.includes('deep work')) return 'enfoque_productividad';
+if(t.includes('protocolo')||t.includes('surek')||t.includes('sistema')||t.includes('planificar')||t.includes('dia')) return 'protocolo_surek';
+return 'default';
+}
+
+function sendMsg(){
+const input = document.getElementById('chatInput');
+const text = input.value.trim();
+if(!text) return;
+const msgs = document.getElementById('chatMsgs');
+const userDiv = document.createElement('div');
+userDiv.className = 'msg user';
+userDiv.innerHTML = `<div class="bubble">${text}</div>`;
+msgs.appendChild(userDiv);
+input.value = '';
+const category = findCategory(text);
+setTimeout(() => {
+const botDiv = document.createElement('div');
+botDiv.className = 'msg bot';
+botDiv.innerHTML = `<div class="bubble">${getRandomResponse(category)}</div>`;
+msgs.appendChild(botDiv);
+msgs.scrollTop = msgs.scrollHeight;
+},400 + Math.random()*600);
+msgs.scrollTop = msgs.scrollHeight;
+}
+
+function quickChat(msg){
+document.getElementById('chatInput').value = msg;
+sendMsg();
+}
+
+document.getElementById('chatInput').addEventListener('keydown',function(e){
+if(e.key === 'Enter') sendMsg();
+});
+
+// Parallax hero effect
+window.addEventListener('scroll', function() {
+  const scrolled = window.scrollY;
+  const heroImg = document.querySelector('.hero .right .bg-img');
+  if(heroImg && scrolled < 800) {
+    heroImg.style.transform = `translateY(${scrolled * 0.3}px) scale(1.05)`;
+  }
+});
+
+// Dashboard counter animation
+const dashBalance = document.getElementById('dashBalance');
+if(dashBalance) {
+  let val = 1240.50;
+  setInterval(() => {
+    if(Math.random() > 0.6) {
+      val += (Math.random() * 5);
+      dashBalance.textContent = '$' + val.toFixed(2);
+      dashBalance.style.color = '#fff';
+      setTimeout(() => dashBalance.style.color = '#00e5ff', 300);
+    }
+  }, 2500);
+}
+
+// SUREK TV Calculator
+const slider = document.getElementById('sliderHours');
+const role = document.getElementById('calcRole');
+const result = document.getElementById('calcResult');
+const label = document.getElementById('calcHours');
+
+function updateCalc() {
+  const hours = parseInt(slider.value);
+  const multiplier = parseInt(role.value);
+  label.textContent = hours;
+  const baseRate = 12.5; // Example base rate
+  const total = (hours * baseRate * multiplier).toFixed(2);
+  result.textContent = '$' + total + ' / mes';
+}
+
+if(slider && role) {
+  slider.addEventListener('input', updateCalc);
+  role.addEventListener('change', updateCalc);
+  updateCalc(); // initial update
+}
+</script>
+</body>
+</html>
