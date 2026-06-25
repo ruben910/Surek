@@ -174,8 +174,10 @@ footer .inner .social-links a:hover{color:#00e5ff}
 
 @media(max-width:900px){
 nav{padding:.8rem 1.5rem}
-nav .nav-links{gap:1.25rem}
-nav .nav-links a{font-size:.65rem;letter-spacing:1.5px}
+nav .menu-toggle { display: block !important; }
+nav .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: rgba(6,11,25,0.98); padding: 2rem; border-bottom: 1px solid #00e5ff; text-align: center; }
+nav .nav-links.active { display: flex; }
+nav .nav-links a{font-size:.8rem;letter-spacing:1.5px;padding:1rem 0;display:block}
 .hero{grid-template-columns:1fr;padding-top:60px}
 .hero .left{padding:3rem 1.5rem 2rem}
 .hero .left h1{font-size:2.5rem}
@@ -187,6 +189,8 @@ nav .nav-links a{font-size:.65rem;letter-spacing:1.5px}
 .community .top{grid-template-columns:1fr;gap:1.5rem}
 footer .inner{flex-direction:column;gap:1rem;text-align:center}
 .responsive-grid, .responsive-grid-3, .responsive-grid-chat { grid-template-columns:1fr !important; gap:2rem !important; }
+.espartano-card { flex-direction: column !important; }
+.espartano-card > div:first-child { width: 100% !important; min-height: 250px !important; }
 }
 
 @media(max-width:480px){
@@ -250,15 +254,16 @@ nav .nav-links a{font-size:.6rem;letter-spacing:1px}
 
 <nav>
 <a href="#" class="logo logo-roll-in">
-<img src="images/logo_surek_1782374202728.png" alt="SUREK" onerror="this.style.display='none'" style="height:35px;width:auto;border-radius:4px">
-<span class="logo-text">SURE<span>K</span></span>
+<img src="images/og-spartan.jpg" alt="SUREK" onerror="this.style.display='none'" style="height:40px;width:40px;border-radius:50%;object-fit:cover;border:1px solid #00e5ff">
+<span class="logo-text" style="margin-left:10px">SURE<span>K</span></span>
 </a>
+<div class="menu-toggle" onclick="document.getElementById('navLinks').classList.toggle('active')" style="display:none;font-size:1.8rem;cursor:pointer;color:#00e5ff">☰</div>
 <ul class="nav-links" id="navLinks">
-<li><a href="#espartano">Guerreros</a></li>
-<li><a href="#productos">Productos</a></li>
-<li><a href="#protocolo">Protocolo</a></li>
-<li><a href="#comunidad">Comunidad</a></li>
-<li><a href="#mentor">Mentor IA</a></li>
+<li><a href="#espartano" onclick="document.getElementById('navLinks').classList.remove('active')">Guerreros</a></li>
+<li><a href="#productos" onclick="document.getElementById('navLinks').classList.remove('active')">Productos</a></li>
+<li><a href="#protocolo" onclick="document.getElementById('navLinks').classList.remove('active')">Protocolo</a></li>
+<li><a href="#comunidad" onclick="document.getElementById('navLinks').classList.remove('active')">Comunidad</a></li>
+<li><a href="#mentor" onclick="document.getElementById('navLinks').classList.remove('active')">Mentor IA</a></li>
 <li><a href="ebook.html">eBook</a></li>
 <li><a href="plan-90-dias.html" style="color:#060b19; background:#00e5ff; padding: 6px 12px; border-radius: 2px; font-weight:700;">Plan 90 Días</a></li>
 </ul>
@@ -304,7 +309,7 @@ nav .nav-links a{font-size:.6rem;letter-spacing:1px}
 
 <section class="section reveal" id="espartano" style="padding:3rem;max-width:1400px;margin:0 auto;position:relative;z-index:2">
 <div class="responsive-grid">
-<div style="background:linear-gradient(135deg,rgba(0,229,255,.08),rgba(6,11,25,1));border:1px solid rgba(0,229,255,.12);padding:0;position:relative;overflow:hidden;display:flex">
+<div class="espartano-card" style="background:linear-gradient(135deg,rgba(0,229,255,.08),rgba(6,11,25,1));border:1px solid rgba(0,229,255,.12);padding:0;position:relative;overflow:hidden;display:flex">
 <div style="width:120px;min-height:200px;flex-shrink:0;overflow:hidden"><img src="images/male_spartan_1782373781532.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;transition:transform 0.5s ease" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"></div>
 <div style="padding:2rem;flex:1"><div style="font-size:.5rem;letter-spacing:3px;color:#00e5ff;text-transform:uppercase;margin-bottom:.75rem;font-weight:500">⚔️ Código Espartano</div>
 <h3 style="font-size:1.3rem;font-weight:700;margin-bottom:.75rem;letter-spacing:-.5px">El Guerrero SUREK</h3>
@@ -313,7 +318,7 @@ nav .nav-links a{font-size:.6rem;letter-spacing:1px}
 <div style="text-align:center;padding:.75rem 1rem;background:rgba(255,255,255,.02);flex:1;min-width:80px;border-left:1px solid #00e5ff"><div style="font-size:1.1rem;font-weight:700;color:#00e5ff;font-family:'JetBrains Mono',monospace">100%</div><div style="font-size:.5rem;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.3);margin-top:.2rem">Disciplina</div></div>
 <div style="text-align:center;padding:.75rem 1rem;background:rgba(255,255,255,.02);flex:1;min-width:80px;border-left:1px solid #00e5ff"><div style="font-size:1.1rem;font-weight:700;color:#00e5ff;font-family:'JetBrains Mono',monospace">300</div><div style="font-size:.5rem;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.3);margin-top:.2rem">Días de lucha</div></div>
 </div></div></div>
-<div style="background:linear-gradient(135deg,rgba(0,229,255,.08),rgba(6,11,25,1));border:1px solid rgba(0,229,255,.12);padding:0;position:relative;overflow:hidden;display:flex">
+<div class="espartano-card" style="background:linear-gradient(135deg,rgba(0,229,255,.08),rgba(6,11,25,1));border:1px solid rgba(0,229,255,.12);padding:0;position:relative;overflow:hidden;display:flex">
 <div style="width:120px;min-height:200px;flex-shrink:0;overflow:hidden"><img src="images/female_spartan_1782373803945.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;transition:transform 0.5s ease" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"></div>
 <div style="padding:2rem;flex:1"><div style="font-size:.5rem;letter-spacing:3px;color:#00e5ff;text-transform:uppercase;margin-bottom:.75rem;font-weight:500">⚔️ Espíritu Spartana</div>
 <h3 style="font-size:1.3rem;font-weight:700;margin-bottom:.75rem;letter-spacing:-.5px">La Amazona SUREK</h3>
@@ -520,11 +525,11 @@ nav .nav-links a{font-size:.6rem;letter-spacing:1px}
 <script>
 const products = [
 {type:"eBook · Más vendido",name:"The 90-Day Architecture",desc:"9 páginas. 90 días. El híbrido perfecto: Transforma tu físico y empieza a monetizar.",price:"$47",period:" único",features:["Protocolo Fitness","Fondo de Monetización","Comunidad SUREK"],cta:"Ver eBook →",link:"ebook.html", image: "images/hero.jpg"},
-{type:"Físico",name:"Tenis SUREK Elite",desc:"Calzado de alto rendimiento. Ligereza, tracción extrema y diseño vibrante.",price:"$120",period:" par",features:["Amortiguación reactiva","Suela antideslizante"],cta:"Comprar Tenis", image: "images/product_sneakers_1782374223346.png"},
-{type:"Físico",name:"SUREK Performance Shirt",desc:"Camisa deportiva de secado rápido. Se adapta a tu cuerpo y destaca tu físico.",price:"$35",period:" c/u",features:["Secado ultra rápido","Ajuste muscular"],cta:"Comprar Camisa", image: "images/product_sportshirt_1782374243851.png"},
-{type:"Físico",name:"Streetwear SUREK Casual",desc:"Ropa de salir con el ADN SUREK. Para que lleves tu mentalidad élite fuera del gimnasio.",price:"$55",period:" conjunto",features:["Algodón premium","Comodidad total"],cta:"Ver Colección", image: "images/product_casual_1782374498828.png"},
-{type:"Físico",name:"SUREK Pro Socks",desc:"Medias de compresión para rendimiento y recuperación. Soporte de arco y talón reforzado.",price:"$15",period:" pack 3",features:["Compresión graduada","Soporte activo"],cta:"Añadir Medias", image: "images/product_socks_1782374484496.png"},
-{type:"Físico",name:"Gorra SUREK Edition",desc:"Snapback moderna para entrenar o para tu día a día. Protégete del sol con estilo.",price:"$25",period:" única",features:["Ajuste perfecto","Diseño exclusivo"],cta:"Comprar Gorra", image: "images/product_cap_1782374512320.png"}
+{type:"Físico",name:"Tenis SUREK Elite",desc:"Calzado de alto rendimiento. Ligereza, tracción extrema y diseño vibrante.<div style='color:#4ade80; font-size:0.75rem; margin-top:0.6rem; font-weight:800; letter-spacing:0.5px'>Ganancia: 60% Tú / 40% SUREK</div>",price:"$120",period:" par",features:["Amortiguación reactiva","Suela antideslizante"],cta:"Comprar Tenis", image: "images/product_sneakers_v2.png"},
+{type:"Físico",name:"SUREK Performance Shirt",desc:"Camisa deportiva de secado rápido. Se adapta a tu cuerpo y destaca tu físico.<div style='color:#4ade80; font-size:0.75rem; margin-top:0.6rem; font-weight:800; letter-spacing:0.5px'>Ganancia: 60% Tú / 40% SUREK</div>",price:"$35",period:" c/u",features:["Secado ultra rápido","Ajuste muscular"],cta:"Comprar Camisa", image: "images/product_shirt_v2.png"},
+{type:"Físico",name:"Streetwear SUREK Casual",desc:"Ropa de salir con el ADN SUREK. Para que lleves tu mentalidad élite fuera del gimnasio.<div style='color:#4ade80; font-size:0.75rem; margin-top:0.6rem; font-weight:800; letter-spacing:0.5px'>Ganancia: 60% Tú / 40% SUREK</div>",price:"$55",period:" conjunto",features:["Algodón premium","Comodidad total"],cta:"Ver Colección", image: "images/product_streetwear_v2.png"},
+{type:"Físico",name:"SUREK Pro Socks",desc:"Medias de compresión para rendimiento y recuperación. Soporte de arco y talón reforzado.<div style='color:#4ade80; font-size:0.75rem; margin-top:0.6rem; font-weight:800; letter-spacing:0.5px'>Ganancia: 60% Tú / 40% SUREK</div>",price:"$15",period:" pack 3",features:["Compresión graduada","Soporte activo"],cta:"Añadir Medias", image: "images/product_socks_1782374484496.png"},
+{type:"Físico",name:"Gorra SUREK Edition",desc:"Snapback moderna para entrenar o para tu día a día. Protégete del sol con estilo.<div style='color:#4ade80; font-size:0.75rem; margin-top:0.6rem; font-weight:800; letter-spacing:0.5px'>Ganancia: 60% Tú / 40% SUREK</div>",price:"$25",period:" única",features:["Ajuste perfecto","Diseño exclusivo"],cta:"Comprar Gorra", image: "images/product_cap_1782374512320.png"}
 ];
 
 const grid = document.getElementById("productGrid");
