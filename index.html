@@ -9,7 +9,9 @@
 <meta property="og:image" content="https://ruben910.github.io/Surek/images/og-spartan.jpg">
 <meta property="og:url" content="https://ruben910.github.io/Surek/">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/jpeg" href="images/og-spartan.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -216,6 +218,25 @@ nav .nav-links a{font-size:.6rem;letter-spacing:1px}
 .dash-chart .bar{flex:1;background:linear-gradient(to top,rgba(0,229,255,0.2),#00e5ff);border-radius:2px 2px 0 0;opacity:0.7;transition:all 0.3s;animation:revealUp 1s ease backwards}
 .dash-chart .bar:nth-child(1){animation-delay:0.1s}.dash-chart .bar:nth-child(2){animation-delay:0.2s}.dash-chart .bar:nth-child(3){animation-delay:0.3s}.dash-chart .bar:nth-child(4){animation-delay:0.4s}.dash-chart .bar:nth-child(5){animation-delay:0.5s}
 .dash-chart .bar:hover{opacity:1;background:#00e5ff;transform:scaleY(1.05);transform-origin:bottom}
+
+@keyframes pulseLogo {
+  0% { box-shadow: 0 0 15px rgba(0,229,255,0.2); }
+  50% { box-shadow: 0 0 35px rgba(0,229,255,0.8); }
+  100% { box-shadow: 0 0 15px rgba(0,229,255,0.2); }
+}
+@keyframes floatMoney {
+  0% { transform: translateY(50px) rotate(-10deg) scale(0.8); opacity: 0; }
+  15% { opacity: 0.9; }
+  85% { opacity: 0.9; }
+  100% { transform: translateY(-250px) rotate(20deg) scale(1.2); opacity: 0; }
+}
+.money-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+.money-particle { position: absolute; bottom: -20px; background: url('images/money-effect.png') center/contain no-repeat; opacity: 0; animation: floatMoney 6s infinite ease-in; filter: drop-shadow(0 0 15px rgba(0,229,255,0.4)); }
+.money-particle:nth-child(1) { left: 15%; width: 55px; height: 55px; animation-duration: 7s; animation-delay: 0s; }
+.money-particle:nth-child(2) { left: 35%; width: 40px; height: 40px; animation-duration: 5s; animation-delay: 2.5s; }
+.money-particle:nth-child(3) { left: 55%; width: 70px; height: 70px; animation-duration: 8.5s; animation-delay: 1s; }
+.money-particle:nth-child(4) { left: 75%; width: 45px; height: 45px; animation-duration: 6s; animation-delay: 4s; }
+.money-particle:nth-child(5) { left: 85%; width: 50px; height: 50px; animation-duration: 7.5s; animation-delay: 5.5s; }
 </style>
 </head>
 <body>
@@ -245,6 +266,7 @@ nav .nav-links a{font-size:.6rem;letter-spacing:1px}
 
 <section class="hero">
 <div class="left">
+<img src="images/og-spartan.jpg" alt="SUREK Spartan Logo" style="width:90px; height:90px; border-radius:50%; margin-bottom:1.5rem; border:2px solid #00e5ff; animation:pulseLogo 3s infinite ease-in-out;">
 <div class="badge">Fundado en el rendimiento</div>
 <h1>THE ARCHITECTURE<br>OF PERFORMANCE<span class="line2">CUERPO · MENTE · DATOS</span></h1>
 <p>Donde el elite humano se encuentra con la arquitectura digital. Sistemas diseñados para optimizar cuerpo, mente y datos en una sola frecuencia.</p>
@@ -386,11 +408,14 @@ nav .nav-links a{font-size:.6rem;letter-spacing:1px}
 </div>
 </section>
 
-<section class="section reveal" id="surektv">
-<div class="section-tag">⏤ ECONOMÍA DESCENTRALIZADA</div>
-<h2>SUREK TV <span>— Tu sueldo pasivo</span></h2>
-<p class="sub">El mundo te paga por entrenar. Nuestra red de minicanales locales recompensa a quienes apoyan a la tribu de Puerto Rico.</p>
-<div class="responsive-grid align-center pad-y">
+<section class="section reveal" id="surektv" style="position:relative;">
+<div class="money-particles">
+<div class="money-particle"></div><div class="money-particle"></div><div class="money-particle"></div><div class="money-particle"></div><div class="money-particle"></div>
+</div>
+<div class="section-tag" style="position:relative;z-index:1;">⏤ ECONOMÍA DESCENTRALIZADA</div>
+<h2 style="position:relative;z-index:1;">SUREK TV <span>— Tu sueldo pasivo</span></h2>
+<p class="sub" style="position:relative;z-index:1;">El mundo te paga por entrenar. Nuestra red de minicanales locales recompensa a quienes apoyan a la tribu de Puerto Rico.</p>
+<div class="responsive-grid align-center pad-y" style="position:relative;z-index:1;">
 <div class="left">
 <h3 style="font-size:1.3rem;font-weight:700;margin-bottom:1rem;color:#00e5ff">El Modelo "Turno de Trabajo"</h3>
 <p style="font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.7;margin-bottom:1.5rem">Con SUREK, tu lealtad vale dinero real. Al unirte a una de las 20 zonas geográficas, te conviertes en parte del Fondo de Ganancias. Haz tu "Turno de Trabajo" diario: mira el contenido de tu zona, dale like a tu comunidad y asegura tu porción del sueldo mensual generado por la monetización global.</p>
