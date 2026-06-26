@@ -92,7 +92,9 @@ nav .back-link:hover{color:var(--cyan); text-shadow: 0 0 8px var(--cyan-glow);}
 }
 
 .hero-half.men { background-image: url('images/guerrero-surek.jpg'); }
-.hero-half.women { background-image: url('images/guerrera-surek.png'); }
+.hero-half.women { background-image: url('images/guerrera-surek.png'); transform: scaleX(-1); }
+.hero-half.women .hero-half-content { transform: scaleX(-1) translateY(20px); }
+.hero-half.women:hover .hero-half-content { transform: scaleX(-1) translateY(0); }
 
 .hero-half-content {
     position: relative;

@@ -59,7 +59,7 @@ nav .nav-links a:hover::after{width:100%}
 nav .menu-toggle{display:none;flex-direction:column;cursor:pointer;gap:4px;background:none;border:none;padding:4px}
 nav .menu-toggle span{width:20px;height:1.5px;background:#fff;transition:.3s}
 
-.hero{position:relative;min-height:100vh;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;padding-top:70px}
+.hero{position:relative;min-height:100vh;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr auto;overflow:hidden;padding-top:70px}
 .hero .left{padding:5rem 3rem 3rem;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2}
 .hero .left .badge{display:inline-flex;align-items:center;gap:.5rem;border:1px solid rgba(0,229,255,.2);padding:.35rem .9rem;font-size:.6rem;letter-spacing:2.5px;text-transform:uppercase;color:#00e5ff;margin-bottom:1.5rem;width:fit-content;font-weight:500}
 .hero .left .badge::before{content:'';width:5px;height:5px;background:#00e5ff;border-radius:50%}
@@ -74,12 +74,12 @@ nav .menu-toggle span{width:20px;height:1.5px;background:#fff;transition:.3s}
 .hero .left .btn-secondary{background:transparent;border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.65);padding:.75rem 2rem;text-decoration:none;font-size:.7rem;font-weight:500;letter-spacing:2px;text-transform:uppercase;transition:all .3s;cursor:pointer}
 .hero .left .btn-secondary:hover{border-color:rgba(255,255,255,.3);color:#fff}
 .hero .right{position:relative;overflow:hidden}
-.hero .right .bg-img{position:absolute;inset:0;background:url('images/hero_running_1782373758384.png') center/cover no-repeat;filter:grayscale(0.3) contrast(1.2);opacity:.65;transition:transform 0.5s ease-out;transform-origin: center;}
+.hero .right .bg-img{position:absolute;inset:0;background:url('images/product1.jpg') center/cover no-repeat;filter:grayscale(0.3) contrast(1.2);opacity:.65;transition:transform 0.5s ease-out;transform-origin: center;}
 .hero .right .overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(6,11,25,.75),rgba(6,11,25,.15),rgba(6,11,25,.55))}
 .hero .right .wireframe{position:absolute;inset:0;z-index:2}
 .hero .right .wireframe svg{width:100%;height:100%}
 
-.metrics-strip{position:absolute;bottom:0;left:0;right:0;padding:1.25rem 3rem;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.02);border-top:1px solid rgba(0,229,255,.1);z-index:3}
+.metrics-strip{grid-column:1 / -1;padding:1.25rem 3rem;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.02);border-top:1px solid rgba(0,229,255,.1);z-index:3}
 .metrics-strip .metric{text-align:center;padding:.6rem 0;position:relative}
 .metrics-strip .metric:not(:last-child)::after{content:'';position:absolute;right:0;top:20%;height:60%;width:1px;background:rgba(0,229,255,.08)}
 .metrics-strip .metric .value{font-size:1.3rem;font-weight:700;color:#00e5ff;font-family:'JetBrains Mono',monospace}
@@ -228,19 +228,12 @@ nav .nav-links a{font-size:.6rem;letter-spacing:1px}
   50% { box-shadow: 0 0 35px rgba(0,229,255,0.8); }
   100% { box-shadow: 0 0 15px rgba(0,229,255,0.2); }
 }
-@keyframes floatMoney {
-  0% { transform: translateY(50px) rotate(-10deg) scale(0.8); opacity: 0; }
-  15% { opacity: 0.9; }
-  85% { opacity: 0.9; }
-  100% { transform: translateY(-250px) rotate(20deg) scale(1.2); opacity: 0; }
-}
-.money-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
-.money-particle { position: absolute; bottom: -20px; background: url('images/money-effect.png') center/contain no-repeat; opacity: 0; animation: floatMoney 6s infinite ease-in; filter: drop-shadow(0 0 15px rgba(0,229,255,0.4)); }
-.money-particle:nth-child(1) { left: 15%; width: 55px; height: 55px; animation-duration: 7s; animation-delay: 0s; }
-.money-particle:nth-child(2) { left: 35%; width: 40px; height: 40px; animation-duration: 5s; animation-delay: 2.5s; }
-.money-particle:nth-child(3) { left: 55%; width: 70px; height: 70px; animation-duration: 8.5s; animation-delay: 1s; }
-.money-particle:nth-child(4) { left: 75%; width: 45px; height: 45px; animation-duration: 6s; animation-delay: 4s; }
-.money-particle:nth-child(5) { left: 85%; width: 50px; height: 50px; animation-duration: 7.5s; animation-delay: 5.5s; }
+
+.btn-shine-gold { position:relative; overflow:hidden; display:inline-block; padding:6px 16px; border-radius:4px; background:linear-gradient(135deg, #FFD700 0%, #D4AF37 100%); color:#060b19 !important; font-weight:800 !important; box-shadow:0 0 12px rgba(212, 175, 55, 0.5); text-decoration:none; margin-left:10px; }
+nav .nav-links a.btn-shine-gold::after { display: none; }
+.btn-shine-gold::after { content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%); transform:rotate(30deg) translateX(-100%); animation:shineGold 3s infinite; }
+@keyframes shineGold { 0% { transform:rotate(30deg) translateX(-100%); } 20% { transform:rotate(30deg) translateX(100%); } 100% { transform:rotate(30deg) translateX(100%); } }
+.btn-shine-gold:hover { transform:translateY(-2px); box-shadow:0 0 20px rgba(212, 175, 55, 0.8); color:#060b19 !important; }
 </style>
 </head>
 <body>
@@ -254,29 +247,28 @@ nav .nav-links a{font-size:.6rem;letter-spacing:1px}
 
 <nav>
 <a href="#" class="logo logo-roll-in">
-<img src="images/og-spartan.jpg" alt="SUREK" onerror="this.style.display='none'" style="height:40px;width:40px;border-radius:50%;object-fit:cover;border:1px solid #00e5ff">
+<img src="images/hero.jpg" alt="SUREK" onerror="this.style.display='none'" style="height:40px;width:40px;border-radius:50%;object-fit:cover;border:1px solid #00e5ff">
 <span class="logo-text" style="margin-left:10px">SURE<span>K</span></span>
 </a>
 <div class="menu-toggle" onclick="document.getElementById('navLinks').classList.toggle('active')" style="display:none;font-size:1.8rem;cursor:pointer;color:#00e5ff">☰</div>
 <ul class="nav-links" id="navLinks">
 <li><a href="#espartano" onclick="document.getElementById('navLinks').classList.remove('active')">Guerreros</a></li>
-<li><a href="#productos" onclick="document.getElementById('navLinks').classList.remove('active')">Productos</a></li>
+<li><a href="productos.html" target="_blank" class="btn-shine-gold">Productos</a></li>
 <li><a href="#protocolo" onclick="document.getElementById('navLinks').classList.remove('active')">Protocolo</a></li>
 <li><a href="#comunidad" onclick="document.getElementById('navLinks').classList.remove('active')">Comunidad</a></li>
 <li><a href="#mentor" onclick="document.getElementById('navLinks').classList.remove('active')">Mentor IA</a></li>
-<li><a href="ebook.html">eBook</a></li>
-<li><a href="plan-90-dias.html" style="color:#060b19; background:#00e5ff; padding: 6px 12px; border-radius: 2px; font-weight:700;">Plan 90 Días</a></li>
+<li><a href="plan-90-dias-v2.html" style="color:#060b19; background:#00e5ff; padding: 6px 12px; border-radius: 2px; font-weight:700;">Plan 90 Días</a></li>
 </ul>
 </nav>
 
 <section class="hero">
 <div class="left">
-<img src="images/og-spartan.jpg" alt="SUREK Spartan Logo" style="width:90px; height:90px; border-radius:50%; margin-bottom:1.5rem; border:2px solid #00e5ff; animation:pulseLogo 3s infinite ease-in-out;">
+<img src="images/hero.jpg" alt="SUREK Spartan Logo" style="width:90px; height:90px; border-radius:50%; margin-bottom:1.5rem; border:2px solid #00e5ff; animation:pulseLogo 3s infinite ease-in-out;">
 <div class="badge">Fundado en el rendimiento</div>
 <h1>THE ARCHITECTURE<br>OF PERFORMANCE<span class="line2">CUERPO · MENTE · DATOS</span></h1>
 <p>Donde el elite humano se encuentra con la arquitectura digital. Sistemas diseñados para optimizar cuerpo, mente y datos en una sola frecuencia.</p>
 <div class="cta-group">
-<a href="#productos" class="btn-primary">Explorar productos</a>
+<a href="productos.html" target="_blank" class="btn-primary">Explorar productos</a>
 <a href="#mentor" class="btn-secondary">Hablar con mentor IA</a>
 </div>
 </div>
@@ -333,13 +325,6 @@ nav .nav-links a{font-size:.6rem;letter-spacing:1px}
 </div>
 </section>
 
-<section class="section reveal" id="productos">
-<div class="section-tag">⏤ Catálogo SUREK</div>
-<h2>Productos <span>para tu evolución</span></h2>
-<p class="sub">Digitales y físicos. Cada uno diseñado para optimizar tu rendimiento.</p>
-<div class="products-grid" id="productGrid"></div>
-</section>
-
 <section class="section reveal" id="protocolo">
 <div class="section-tag">⏤ Sistema Diario</div>
 <h2>Protocolo SUREK <span>— planifica tu día</span></h2>
@@ -348,14 +333,14 @@ nav .nav-links a{font-size:.6rem;letter-spacing:1px}
 <div class="left">
 <div class="phone-frame">
 <div class="time">⏤ PROTOCOLO DIARIO</div>
-<div class="slot"><span class="hour">06:00</span><span class="task">Activación — <em>Hidratación + luz solar</em></span></div>
-<div class="slot"><span class="hour">06:30</span><span class="task">Movimiento — <em>Entrenamiento funcional</em></span></div>
-<div class="slot"><span class="hour">08:00</span><span class="task">Nutrición — <em>Ventana anabólica</em></span></div>
-<div class="slot"><span class="hour">09:00</span><span class="task">Deep Work — <em>2h enfoque absoluto</em></span></div>
-<div class="slot"><span class="hour">12:00</span><span class="task">Recarga — <em>Comida + NSDR 20min</em></span></div>
-<div class="slot"><span class="hour">15:00</span><span class="task">Evolución — <em>Skill acquisition</em></span></div>
-<div class="slot"><span class="hour">18:00</span><span class="task">Desconexión — <em>Familia · Lectura</em></span></div>
-<div class="slot"><span class="hour">21:00</span><span class="task">Regeneración — <em>Sueño profundo</em></span></div>
+<div class="slot"><span class="hour">6:00 AM</span><span class="task">Despertar — <em>Agua y coger sol temprano</em></span></div>
+<div class="slot"><span class="hour">6:30 AM</span><span class="task">A Sudar — <em>Entrenar duro</em></span></div>
+<div class="slot"><span class="hour">8:00 AM</span><span class="task">Desayuno — <em>Comer pa' recuperar</em></span></div>
+<div class="slot"><span class="hour">9:00 AM</span><span class="task">Fronteo — <em>2 horas sin distracciones</em></span></div>
+<div class="slot"><span class="hour">12:00 PM</span><span class="task">Almuerzo — <em>Comer y un break de 20 min</em></span></div>
+<div class="slot"><span class="hour">3:00 PM</span><span class="task">Aprender — <em>Estudiar o hacer algo nuevo</em></span></div>
+<div class="slot"><span class="hour">6:00 PM</span><span class="task">Desconectar — <em>Familia y relax</em></span></div>
+<div class="slot"><span class="hour">9:00 PM</span><span class="task">A Dormir — <em>Descanso profundo</em></span></div>
 </div>
 </div>
 <div class="right">
@@ -368,55 +353,41 @@ nav .nav-links a{font-size:.6rem;letter-spacing:1px}
 </section>
 
 <section class="section reveal" id="comunidad">
-<div class="section-tag">⏤ SUREK SOCIETY</div>
-<h2>La comunidad <span>del rendimiento</span></h2>
-<p class="sub">No estás solo. Una tribu global de elite que comparte datos, retos y evolución diaria.</p>
-<div class="community" style="background: linear-gradient(135deg, rgba(6,11,25,0.85), rgba(6,11,25,0.95)), url('images/lifestyle_pr_1782374269982.png') center/cover no-repeat; border-radius:1.5rem; padding:3rem; border:1px solid rgba(0,229,255,.08); margin-bottom:3rem; position:relative; overflow:hidden;">
-<div class="top">
-<div class="left">
-<h2 style="font-size:1.5rem;margin-bottom:.5rem">Gana dinero <span>haciendo lo que amas</span></h2>
-<p style="font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.6;font-family:'JetBrains Mono',monospace;font-weight:300">El nuevo reto digital. Compite, crea contenido, entrena, y monetiza tu evolución. SUREK Society recompensa tu constancia.</p>
-<div class="stat-row">
-<div><div class="num">2,847</div><div class="lbl">Miembros activos</div></div>
-<div><div class="num">143</div><div class="lbl">Países</div></div>
-<div><div class="num">$50K+</div><div class="lbl">En rewards</div></div>
-</div>
-<button class="btn-community" onclick="alert('Bienvenido a SUREK Society — Pronto tendrás tu acceso.')">Unirme a la tribu</button>
-</div>
-<div class="right" style="position:relative;perspective:1000px">
-<div class="dashboard-preview reveal">
-  <div class="dash-header">
-    <div class="dash-user"><div class="dash-avatar"></div><span>Marcos G.</span></div>
-    <div class="dash-balance">Balance: <span class="text-gold" id="dashBalance">$1,240.50</span></div>
-  </div>
-  <div class="dash-body">
-    <div class="dash-card">
-      <div class="dash-card-title">Reto 10K completado</div>
-      <div class="dash-card-value text-green">+$50.00</div>
+<div class="section-tag">⏤ EL ECOSISTEMA SUREK</div>
+<h2>Gana dinero <span>haciendo lo que amas</span></h2>
+<p class="sub">Un sistema donde tu disciplina y el apoyo a tu tribu se convierten en recompensas reales.</p>
+
+<div class="community ecosistema-grid" style="background: rgba(6,11,25,0.85); border-radius:1.5rem; padding:3rem; border:1px solid rgba(0,229,255,.15); margin-bottom:3rem; position:relative; overflow:hidden; display:grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items:center;">
+    
+    <div class="left" style="z-index: 2;">
+        <h3 style="font-size:2rem; font-weight:800; margin-bottom:2rem;">Cómo funciona la vuelta</h3>
+        <div style="display:flex; flex-direction:column; gap:1.5rem;">
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); padding:1.5rem; border-radius:12px; border-left: 4px solid #00e5ff; transition: transform 0.3s;" onmouseover="this.style.transform='translateX(10px)'" onmouseout="this.style.transform='translateX(0)'">
+                <h4 style="color:#00e5ff; font-size:1.1rem; margin-bottom:0.5rem; font-family:'JetBrains Mono', monospace;">01. METE MANO</h4>
+                <p style="color:#aaa; font-size:0.95rem; line-height:1.5;">Cumple con tus entrenamientos, sigue el protocolo diario y conviértete en tu mejor versión.</p>
+            </div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); padding:1.5rem; border-radius:12px; border-left: 4px solid #00e5ff; transition: transform 0.3s;" onmouseover="this.style.transform='translateX(10px)'" onmouseout="this.style.transform='translateX(0)'">
+                <h4 style="color:#00e5ff; font-size:1.1rem; margin-bottom:0.5rem; font-family:'JetBrains Mono', monospace;">02. APOYA AL CORILLO</h4>
+                <p style="color:#aaa; font-size:0.95rem; line-height:1.5;">Conéctate de 9 AM a 12 PM para darle like y compartir el contenido de los panas de la tribu. Juntos forzamos el algoritmo.</p>
+            </div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); padding:1.5rem; border-radius:12px; border-left: 4px solid #00e5ff; transition: transform 0.3s;" onmouseover="this.style.transform='translateX(10px)'" onmouseout="this.style.transform='translateX(0)'">
+                <h4 style="color:#00e5ff; font-size:1.1rem; margin-bottom:0.5rem; font-family:'JetBrains Mono', monospace;">03. COBRA TU CORTE</h4>
+                <p style="color:#aaa; font-size:0.95rem; line-height:1.5;">Al cumplir con tu turno, te llevas tu parte del Fondo de Ingresos Pasivos o el 60% por cada venta de ropa con tu enlace.</p>
+            </div>
+        </div>
+        <button class="btn-community" style="margin-top:2.5rem;" onclick="alert('Bienvenido al Ecosistema — Pronto tendrás tu acceso.')">Unirme al Ecosistema</button>
     </div>
-    <div class="dash-card">
-      <div class="dash-card-title">Racha de 30 días</div>
-      <div class="dash-card-value text-green">+$100.00</div>
+
+    <div class="right" style="position:relative; border-radius: 16px; overflow:hidden; box-shadow: 0 20px 50px rgba(0,229,255,0.15); height: 100%; min-height: 400px;">
+        <img src="images/ecosystem.png" alt="Ecosistema de recompensas" style="width:100%; height:100%; object-fit:cover; display:block;">
+        <div style="position:absolute; bottom:20px; left:20px; background:rgba(0,229,255,0.15); border:1px solid #00e5ff; padding:0.8rem 1.5rem; border-radius:8px; font-size:0.85rem; font-weight:800; color:#00e5ff; animation: floatTitle 3s infinite ease-in-out; backdrop-filter:blur(10px);">💰 Depósito Completado</div>
     </div>
-    <div class="dash-chart">
-      <div class="bar" style="height: 30%"></div>
-      <div class="bar" style="height: 60%"></div>
-      <div class="bar" style="height: 45%"></div>
-      <div class="bar" style="height: 80%"></div>
-      <div class="bar" style="height: 100%"></div>
-    </div>
-  </div>
-</div>
-<div style="position:absolute; bottom:-20px; right:20px; background:rgba(0,229,255,0.15); border:1px solid #00e5ff; padding:0.5rem 1rem; border-radius:4px; font-size:0.65rem; color:#00e5ff; animation: revealUp 1s ease 1s backwards; backdrop-filter:blur(10px)">Nuevo depósito recibido 🔔</div>
-</div>
-</div>
+
 </div>
 </section>
 
 <section class="section reveal" id="surektv" style="position:relative;">
-<div class="money-particles">
-<div class="money-particle"></div><div class="money-particle"></div><div class="money-particle"></div><div class="money-particle"></div><div class="money-particle"></div>
-</div>
+
 <div class="section-tag" style="position:relative;z-index:1;">⏤ ECONOMÍA DESCENTRALIZADA</div>
 <h2 style="position:relative;z-index:1;">SUREK TV <span>— Tu sueldo pasivo</span></h2>
 <p class="sub" style="position:relative;z-index:1;">El mundo te paga por entrenar. Nuestra red de minicanales locales recompensa a quienes apoyan a la tribu de Puerto Rico.</p>
@@ -524,7 +495,7 @@ nav .nav-links a{font-size:.6rem;letter-spacing:1px}
 
 <script>
 const products = [
-{type:"eBook · Más vendido",name:"The 90-Day Architecture",desc:"9 páginas. 90 días. El híbrido perfecto: Transforma tu físico y empieza a monetizar.",price:"$47",period:" único",features:["Protocolo Fitness","Fondo de Monetización","Comunidad SUREK"],cta:"Ver eBook →",link:"ebook.html", image: "images/hero.jpg"},
+{type:"eBook · Más vendido",name:"The 90-Day Architecture",desc:"9 páginas. 90 días. El híbrido perfecto: Transforma tu físico y empieza a monetizar.",price:"$47",period:" único",features:["Protocolo Fitness","Fondo de Monetización","Comunidad SUREK"],cta:"Ver eBook →",link:"plan-90-dias-v2.html", image: "images/hero.jpg"},
 {type:"Físico",name:"Tenis SUREK Elite",desc:"Calzado de alto rendimiento. Ligereza, tracción extrema y diseño vibrante.<div style='color:#4ade80; font-size:0.75rem; margin-top:0.6rem; font-weight:800; letter-spacing:0.5px'>Ganancia: 60% Tú / 40% SUREK</div>",price:"$120",period:" par",features:["Amortiguación reactiva","Suela antideslizante"],cta:"Comprar Tenis", image: "images/product_sneakers_v2.png"},
 {type:"Físico",name:"SUREK Performance Shirt",desc:"Camisa deportiva de secado rápido. Se adapta a tu cuerpo y destaca tu físico.<div style='color:#4ade80; font-size:0.75rem; margin-top:0.6rem; font-weight:800; letter-spacing:0.5px'>Ganancia: 60% Tú / 40% SUREK</div>",price:"$35",period:" c/u",features:["Secado ultra rápido","Ajuste muscular"],cta:"Comprar Camisa", image: "images/product_shirt_v2.png"},
 {type:"Físico",name:"Streetwear SUREK Casual",desc:"Ropa de salir con el ADN SUREK. Para que lleves tu mentalidad élite fuera del gimnasio.<div style='color:#4ade80; font-size:0.75rem; margin-top:0.6rem; font-weight:800; letter-spacing:0.5px'>Ganancia: 60% Tú / 40% SUREK</div>",price:"$55",period:" conjunto",features:["Algodón premium","Comodidad total"],cta:"Ver Colección", image: "images/product_streetwear_v2.png"},
@@ -533,6 +504,7 @@ const products = [
 ];
 
 const grid = document.getElementById("productGrid");
+if (grid) {
 products.forEach((p,i) => {
 const card = document.createElement("div");
 card.className = "product-card" + (i === 0 ? " featured" : "");
@@ -542,6 +514,7 @@ if(p.link){card.innerHTML = `<div class="badge-type">${p.type}</div>${imgHTML}<h
 else{card.innerHTML = `<div class="badge-type">${p.type}</div>${imgHTML}<h3>${p.name}</h3><p>${p.desc}</p><ul class="features">${featuresHTML}</ul><div class="price">${p.price}<small>${p.period}</small></div><button class="btn-buy" onclick="handleBuy('${p.name}','${p.price}${p.period}')">${p.cta}</button>`;}
 grid.appendChild(card);
 });
+}
 
 document.addEventListener('mousemove',function(e){const g=document.getElementById('cursorGlow');g.style.left=e.clientX+'px';g.style.top=e.clientY+'px'});
 
